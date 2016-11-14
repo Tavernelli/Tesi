@@ -92,7 +92,7 @@
             this.InitializeComponent();
 
             //test
-            //OpenApplicationWithArguments("OpenCV_tools\\opencv_createsamples.exe", "");
+            OpenApplicationWithArguments("OpenCV_tools\\opencv_createsamples.exe", "");
         }
 
         /// <summary>
