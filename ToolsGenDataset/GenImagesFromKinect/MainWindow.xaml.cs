@@ -42,6 +42,20 @@
         private string savePathImages = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
         /// <summary>
+        /// Open console application with arguments
+        /// </summary>
+        void OpenApplicationWithArguments(String appName,String args)
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName  = Directory.GetCurrentDirectory()+"\\"+appName;
+            startInfo.Arguments = args;
+            process.StartInfo = startInfo;
+            process.Start();    
+        }
+
+        /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
@@ -76,6 +90,9 @@
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            //test
+            //OpenApplicationWithArguments("OpenCV_tools\\opencv_createsamples.exe", "");
         }
 
         /// <summary>
