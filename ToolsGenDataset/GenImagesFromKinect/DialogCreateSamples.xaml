@@ -1,0 +1,71 @@
+﻿<Window x:Class="Microsoft.Samples.Kinect.ColorBasics.DialogCreateSamples"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Microsoft.Samples.Kinect.ColorBasics"
+        mc:Ignorable="d"
+        Title="DialogCreateSamples" Height="329.752" Width="396.694">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
+        <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f" />
+        <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2" />
+
+        <DataTemplate x:Key="DataTemplateFieldListConverter">
+            <Canvas Width="AUTO" Height="48">
+                <Image     Source="{Binding PathImage}" 
+                           Name="ImageName" 
+                           Height="36"
+                           Width="36" 
+                           Canvas.Left="8" 
+                           Canvas.Top="8"/>
+                <TextBlock Text="{Binding PathToShow}" 
+                           Canvas.Left="56" 
+                           Canvas.Top="12" 
+                           Width="AUTO"/>
+            </Canvas>
+        </DataTemplate>
+        
+        <Style TargetType="{x:Type Button}" x:Key="CreateDataButton" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" Background="Transparent">
+                                <TextBlock x:Name="SelectImagesPathText" Text="{TemplateBinding Content}" TextAlignment="Left"  VerticalAlignment="Center" Foreground="{StaticResource KinectPurpleBrush}" FontSize="15" />
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Foreground" Value="{StaticResource KinectBlueBrush}" TargetName="SelectImagesPathText" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </Window.Resources>
+    <Grid>
+        <ListBox x:Name="ImageListBox" 
+                 Height="AUTO" 
+                 Margin="10,10,10,35" 
+                 Width="AUTO"
+                 HorizontalAlignment="Stretch" 
+                 VerticalAlignment="Stretch"
+                 ItemTemplate="{DynamicResource DataTemplateFieldListConverter}"
+                 ItemsSource ="{Binding DataFieldList}" 
+                 IsSynchronizedWithCurrentItem="True" 
+                 />
+        <Button x:Name="BottomCreateSamples"
+                Content="Create OpenCV data samples" 
+                Margin="10,10,10,10"
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom"
+                Style="{StaticResource CreateDataButton}" 
+                Click="BottomCreateSamples_Click"
+                />
+
+    </Grid>
+</Window>
