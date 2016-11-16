@@ -95,8 +95,8 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 savePathImages, 
                 "OpenCV_tools\\opencv_createsamples.exe",
                   "-info temp_out_files.info "
-                + "-vec test.vec -w 256 -h 256 "
-              //+ "-show"
+                + "-vec test.vec -w 20 -h 30 "
+                //+ "-show"
                 );
         }
     }

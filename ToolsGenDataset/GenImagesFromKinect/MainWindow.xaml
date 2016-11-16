@@ -54,7 +54,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Margin="10 0 10 0">
+    <Grid x:Name="MainGrid" Margin="10 0 10 0" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -66,7 +66,7 @@
         <TextBlock Grid.Row="0" HorizontalAlignment="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18">Color Basics</TextBlock>
         <Image Grid.Row="0" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5" />
 
-        <Viewbox Grid.Row="1" HorizontalAlignment="Center">
+        <Viewbox x:Name="MainViewbox" Grid.Row="1" HorizontalAlignment="Center" MouseDown="mainViewbox_MouseDown" MouseMove="mainViewbox_MouseMove" MouseUp="mainViewbox_MouseUp">
             <Image Source="{Binding ImageSource}" Stretch="UniformToFill" />
         </Viewbox>
 

@@ -140,8 +140,8 @@
 
 
         //CASCADE CLASSIFIER
-        CascadeClassifier cClassifierGlass = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\dataPosBicc1\cascade.xml"); //bicchiere2
-        CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
+        CascadeClassifier cClassifierGlass = new CascadeClassifier(@"C:\Users\tavea\Pictures\Nuova cartella\pos\data\cascade.xml"); //bicchiere2
+       // CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
 
         //LAST OBJECT GETTED BY TYPES
         ClassifiedObject glassObjectClassified = new ClassifiedObject();
