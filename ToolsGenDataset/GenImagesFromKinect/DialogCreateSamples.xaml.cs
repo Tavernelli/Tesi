@@ -78,6 +78,27 @@ namespace Microsoft.Samples.Kinect.ColorBasics
            // process.WaitForExit(2000);
         }
 
+        private void textBoxInteger_PreviewTextInput(object sender, TextCompositionEventArgs e) 
+        { 
+            e.Handled = !TextBoxTextAllowed(e.Text); 
+        } 
+
+        private void textBoxInteger_Pasting(object sender, DataObjectPastingEventArgs e) 
+        { 
+            if (e.DataObject.GetDataPresent(typeof(String))) 
+            { 
+                String Text1 = (String)e.DataObject.GetData(typeof(String)); 
+                if (!TextBoxTextAllowed(Text1)) e.CancelCommand(); 
+            } 
+            else e.CancelCommand(); 
+        }
+
+        private Boolean TextBoxTextAllowed(String Text2)
+        {
+            return Array.TrueForAll<Char>(Text2.ToCharArray(),
+                delegate (Char c) { return Char.IsDigit(c) || Char.IsControl(c); });
+        }
+
         private void BottomCreateSamples_Click(object sender, RoutedEventArgs e)
         {
             //list of images
@@ -91,7 +112,9 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 //String OnlynameFile = ((FieldList)field).PathToShow;
                 namePathImages.Add(nameFile);
             }
-             
+            //get values
+            int w = Int32.Parse(textBoxWidth.GetLineText(0));
+            int h = Int32.Parse(textBoxHeight.GetLineText(0));
             //write output
             File.WriteAllText(savePathImages + "\\temp_out_files.info", String.Join("\n", namePathImages.ToArray()));
             if (checkBox.IsChecked == false)
@@ -100,8 +123,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 savePathImages,
                 "OpenCV_tools\\opencv_createsamples.exe",
                 "-info temp_out_files.info "
-                + "-vec test.vec -w 20 -h 30 "
-                // + "-show "
+                + "-vec test.vec -w " + w + " -h "+ h 
                 );
             }
             else
@@ -109,12 +131,11 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 savePathImages,
                 "OpenCV_tools\\opencv_createsamples.exe",
                 "-info temp_out_files.info "
-                + "-vec test.vec -w 20 -h 30 "
+                + "-vec test.vec -w " + w + " -h " + h + " "
                 + "-show "
                 );
 
         }
-
         //nel caso dovessi creare il file sample direttamente da foto 
 #if false
            

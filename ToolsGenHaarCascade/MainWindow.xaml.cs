@@ -85,7 +85,7 @@ namespace ToolsGenHaarCascade
                     "opencv_traincascade.exe",
                     " -data DATA1"
                     + " -vec " + sSelectedFile
-                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg 5 -numStages 21 -w 20 -h 30 -mode ALL -numThreads 4"
+                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg " + NumNeg.GetLineText(0) + " -numStages "+ NumStage.GetLineText(0) + " -w 60 -h 40 -mode ALL -numThreads 4"
 
                 );
 

@@ -149,7 +149,7 @@
         //CASCADE CLASSIFIER
       
         
-        CascadeClassifier cClassifierGlass = new CascadeClassifier(@"C:\Users\tavea\Pictures\OggettiKinect\pos\DATA\cascade.xml"); //bicchiere2
+        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Pictures\OggettiKinect\pos\DATA\cascade.xml"); //bicchiere2
                                                                                                                                    // CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
         //Upload model Button
         private void UploadModel_Click(object sender, EventArgs e)
@@ -161,7 +161,7 @@
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 sSelectedFile = dialog.FileName;
-                cClassifierGlass = new CascadeClassifier(sSelectedFile);
+                cClassifierCurrent = new CascadeClassifier(sSelectedFile);
             }
 
         }
@@ -488,17 +488,17 @@
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
                         ///////////////////////////////////////////////////////////////////
                         
-                        System.Drawing.Rectangle[] gettedGlasses = cClassifierGlass.DetectMultiScale(grayframe, 1.05, 5);
+                        System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 5);
 #if false
                         System.Drawing.Rectangle[] gettedMilks = cClassifierMilk.DetectMultiScale(grayframe, 1.1, 5, new System.Drawing.Size(40, 60), new System.Drawing.Size(170, 260));
 #endif
                         ///////////////////////////////////////////////////////////////////
                         //glasses objects
                         glassObjectClassified.feature = "nodraw";
-                        foreach (var rectGlass in gettedGlasses)
+                        foreach (var rectObj in gettedObjects)
                         {
                             //take center
-                            glassObjectClassified.rectangle = rectGlass;
+                            glassObjectClassified.rectangle = rectObj;
                             glassObjectClassified.ScaleRectangle(scaleFactor);
                             glassObjectClassified.z = 0.0; //todo
                             glassObjectClassified.rotation = 0.0; //todo

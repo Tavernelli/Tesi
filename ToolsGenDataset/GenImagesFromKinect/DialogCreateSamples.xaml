@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.ColorBasics"
         mc:Ignorable="d"
-        Title="DialogCreateSamples" Height="329.752" Width="396.694">
+        Title="DialogCreateSamples" Height="528.252" Width="468.694">
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
@@ -26,7 +26,7 @@
                            Width="AUTO"/>
             </Canvas>
         </DataTemplate>
-        
+
         <Style TargetType="{x:Type Button}" x:Key="CreateDataButton" >
             <Setter Property="Template">
                 <Setter.Value>
@@ -45,12 +45,20 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
     </Window.Resources>
-    <Grid>
+    <Grid RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform/>
+                <SkewTransform/>
+                <RotateTransform Angle="0.282"/>
+                <TranslateTransform/>
+            </TransformGroup>
+        </Grid.RenderTransform>
         <ListBox x:Name="ImageListBox" 
                  Height="AUTO" 
-                 Margin="10,10,10,35" 
+                 Margin="10,10,10,103" 
                  Width="AUTO"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch"
@@ -66,7 +74,46 @@
                 Style="{StaticResource CreateDataButton}" 
                 Click="BottomCreateSamples_Click"
                 />
-        <CheckBox x:Name="checkBox" Content="Show" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10"  />
+        <CheckBox
+            x:Name="checkBox" 
+            Content="Show"
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Bottom"
+            Margin="57,0,0,11" RenderTransformOrigin="-0.151,-0.104" 
+            />
+        <Label x:Name="labelBoxWidth" 
+            Content="Width" 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Bottom"
+            Margin="10,0,0,60" Width="47" />
+        <TextBox
+            x:Name="textBoxWidth"
+            Height="23" 
+            Margin="57,0,0,59" 
+            TextWrapping="Wrap" 
+            Text="30"
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Bottom"
+            Width="120" 
+            PreviewTextInput="textBoxInteger_PreviewTextInput" 
+            DataObject.Pasting="textBoxInteger_Pasting"
+            />
+        <Label x:Name="labelBoxHeight" 
+               Content="Height&#xD;&#xA;"
+               Margin="10,0,0,35" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" Height="25" Width="47"
+               />
+        <TextBox x:Name="textBoxHeight"
+                 Height="23" 
+                 Margin="57,0,0,32" 
+                 TextWrapping="Wrap" 
+                 Text="20" 
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Bottom" 
+                 PreviewTextInput="textBoxInteger_PreviewTextInput" 
+                 DataObject.Pasting="textBoxInteger_Pasting"
+                 Width="120"/>
 
     </Grid>
 </Window>

@@ -76,6 +76,6 @@
             <StatusBarItem Content="{Binding StatusText}" />
         </StatusBar>
         <Button x:Name="SelectImagePath" Content="Select images path" Style="{StaticResource SelectImagesPathButton}" Margin="10,16,0,0" Grid.Row="2" VerticalAlignment="Top" Click="SelectImagePath_Click" HorizontalAlignment="Left"/>
-        <Button x:Name="OpenDialogSamples" Content="Select images path" Style="{StaticResource SelectImagesPathButton}" Margin="10,16,0,0" Grid.Row="2" VerticalAlignment="Top" Click="DialogCreateSamples_Click" HorizontalAlignment="Center"/>
+        <Button x:Name="OpenDialogSamples" Content="Create dataset vector" Style="{StaticResource SelectImagesPathButton}" Margin="10,16,0,0" Grid.Row="2" VerticalAlignment="Top" Click="DialogCreateSamples_Click" HorizontalAlignment="Center"/>
     </Grid>
 </Window>
