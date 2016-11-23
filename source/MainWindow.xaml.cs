@@ -12,6 +12,8 @@
     using Microsoft.Kinect;
     using System.Runtime.InteropServices;
     using System.Windows.Threading;
+    using System.Windows.Forms;
+    using System.IO;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -138,10 +140,32 @@
         /// </summary>
         private double colorFrameAccTime = 0.0;
 
+        /// <summary>
+        /// Current status text to display
+        /// </summary>
+        private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
 
         //CASCADE CLASSIFIER
-        CascadeClassifier cClassifierGlass = new CascadeClassifier(@"C:\Users\tavea\Pictures\Nuova cartella\pos\data\cascade.xml"); //bicchiere2
-       // CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
+      
+        
+        CascadeClassifier cClassifierGlass = new CascadeClassifier(@"C:\Users\tavea\Pictures\OggettiKinect\pos\DATA\cascade.xml"); //bicchiere2
+                                                                                                                                   // CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
+        //Upload model Button
+        private void UploadModel_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "All Files (*.xml)|*.xml";
+            dialog.FilterIndex = 1;
+            dialog.Multiselect = true;
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                sSelectedFile = dialog.FileName;
+                cClassifierGlass = new CascadeClassifier(sSelectedFile);
+            }
+
+        }
+
 
         //LAST OBJECT GETTED BY TYPES
         ClassifiedObject glassObjectClassified = new ClassifiedObject();
@@ -258,6 +282,8 @@
 
             // initialize the components (controls) of the window
             this.InitializeComponent();
+
+            
 
         }
 
@@ -413,8 +439,10 @@
         /// <param name="e">event arguments</param>
         private void Color_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
+
             using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
             {
+
                 if (colorFrame != null)
                 {
                     // k image to bytes
@@ -459,6 +487,7 @@
                         //Image to gray scale
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
                         ///////////////////////////////////////////////////////////////////
+                        
                         System.Drawing.Rectangle[] gettedGlasses = cClassifierGlass.DetectMultiScale(grayframe, 1.05, 5);
 #if false
                         System.Drawing.Rectangle[] gettedMilks = cClassifierMilk.DetectMultiScale(grayframe, 1.1, 5, new System.Drawing.Size(40, 60), new System.Drawing.Size(170, 260));
@@ -688,5 +717,7 @@
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
+
+     
     }
 }

@@ -66,6 +66,7 @@
                 Style="{StaticResource CreateDataButton}" 
                 Click="BottomCreateSamples_Click"
                 />
+        <CheckBox x:Name="checkBox" Content="Show" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10"  />
 
     </Grid>
 </Window>

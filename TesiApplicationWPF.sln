@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenImagesFromKinect-WPF", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToolsGenDataset", "ToolsGenDataset", "{9A6A3D5C-7189-40D8-A55B-B9D99BF67C3C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToolsGenHaarCascade", "ToolsGenHaarCascade", "{EDAB68C1-D7B1-4A9F-A38D-39D9500DB63D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsGenHaarCascade-WPF", "ToolsGenHaarCascade\ToolsGenHaarCascade-WPF.csproj", "{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,11 +35,20 @@ Global
 		{4467C0A4-9040-48BF-B9B7-911A4148D013}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4467C0A4-9040-48BF-B9B7-911A4148D013}.Release|x64.ActiveCfg = Release|Any CPU
 		{4467C0A4-9040-48BF-B9B7-911A4148D013}.Release|x64.Build.0 = Release|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Debug|x64.Build.0 = Debug|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|x64.ActiveCfg = Release|Any CPU
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4467C0A4-9040-48BF-B9B7-911A4148D013} = {9A6A3D5C-7189-40D8-A55B-B9D99BF67C3C}
+		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0} = {EDAB68C1-D7B1-4A9F-A38D-39D9500DB63D}
 	EndGlobalSection
 EndGlobal
