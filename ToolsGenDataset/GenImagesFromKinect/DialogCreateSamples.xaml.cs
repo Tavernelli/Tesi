@@ -16,6 +16,7 @@ using System.Drawing;
 
 namespace Microsoft.Samples.Kinect.ColorBasics
 {
+  
     /// <summary>
     /// Field of a Item in list Items
     /// </summary>
@@ -31,6 +32,12 @@ namespace Microsoft.Samples.Kinect.ColorBasics
     {
         //Variables
         private String          savePathImages;
+
+        /// <summary>
+        /// Current status text to display
+        /// </summary>
+        private string SamplesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
         //Attribute
         private List<FieldList> DataFieldList { get; set; }
 
@@ -115,6 +122,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             //get values
             int w = Int32.Parse(textBoxWidth.GetLineText(0));
             int h = Int32.Parse(textBoxHeight.GetLineText(0));
+            String Samples = SamplesPath + "\\test.vec";
             //write output
             File.WriteAllText(savePathImages + "\\temp_out_files.info", String.Join("\n", namePathImages.ToArray()));
             if (checkBox.IsChecked == false)
@@ -123,7 +131,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 savePathImages,
                 "OpenCV_tools\\opencv_createsamples.exe",
                 "-info temp_out_files.info "
-                + "-vec test.vec -w " + w + " -h "+ h 
+                + "-vec " + Samples + " -w " + w + " -h "+ h 
                 );
             }
             else
@@ -131,10 +139,22 @@ namespace Microsoft.Samples.Kinect.ColorBasics
                 savePathImages,
                 "OpenCV_tools\\opencv_createsamples.exe",
                 "-info temp_out_files.info "
-                + "-vec test.vec -w " + w + " -h " + h + " "
+               + "-vec " + Samples + " -w " + w + " -h " + h + " "
                 + "-show "
                 );
 
+        }
+
+        private void Browse_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            dialog.SelectedPath = SamplesPath;
+            var result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                SamplesPath = dialog.SelectedPath;
+                StampaSamplesPath.Text = SamplesPath;
+            }
         }
         //nel caso dovessi creare il file sample direttamente da foto 
 #if false

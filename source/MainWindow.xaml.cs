@@ -143,14 +143,14 @@
         /// <summary>
         /// Current status text to display
         /// </summary>
-        private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GitHub\\Tesi\\OGGETTI";
 
 
         //CASCADE CLASSIFIER
       
         
-        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Pictures\OggettiKinect\pos\DATA\cascade.xml"); //bicchiere2
-                                                                                                                                   // CascadeClassifier cClassifierMilk = new CascadeClassifier(@"C:\Users\tavea\Desktop\Tesi\TESI MATTEO RIGANELLI\OGGETTI\scatolaLatte\dataAnteriore\cascade.xml"); //scatola
+        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml"); //CascadeDIdefault(bicchiere)
+      
         //Upload model Button
         private void UploadModel_Click(object sender, EventArgs e)
         {
@@ -387,7 +387,7 @@
                                          glassObjectClassified.rectangle.Y,
                                          glassObjectClassified.rectangle.Width,
                                          glassObjectClassified.rectangle.Height);
-                    dc.DrawRectangle(Brushes.Orange, null, rect);
+                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 4), rect);
                 }
                 if(this.bodies != null)
                 {
@@ -488,7 +488,7 @@
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
                         ///////////////////////////////////////////////////////////////////
                         
-                        System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 5);
+                        System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
 #if false
                         System.Drawing.Rectangle[] gettedMilks = cClassifierMilk.DetectMultiScale(grayframe, 1.1, 5, new System.Drawing.Size(40, 60), new System.Drawing.Size(170, 260));
 #endif

@@ -38,7 +38,11 @@
             <TextBox x:Name="NumNeg" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="77" Width="120"/>
             <Label x:Name="label_Copy" Content="Inserisci numero negativi: " Canvas.Left="37" Canvas.Top="75" Width="143"/>
             <TextBox x:Name="NumStage" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="117" Width="120"/>
-            <Label x:Name="label_Copy1" Content="Inserisci numero negativi: " Canvas.Left="37" Canvas.Top="115" Width="143"/>
+            <Label x:Name="label_Copy1" Content="Inserisci numero Stage: " Canvas.Left="37" Canvas.Top="115" Width="143"/>
+            <Label x:Name="label1" Content="Width" Canvas.Left="42" Canvas.Top="154"/>
+            <Label x:Name="label2" Content="Height" Canvas.Left="43" Canvas.Top="192"/>
+            <TextBox x:Name="textBoxWidth" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="60" Canvas.Top="154" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput"  DataObject.Pasting="textBoxInteger_Pasting"/>
+            <TextBox x:Name="textBoxHeight" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="40" Canvas.Top="192" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput" DataObject.Pasting="textBoxInteger_Pasting"/>
             <!--<Button x:Name="GenHaarCascadeFile" Style="{StaticResource CreateDataButton}"  Content="GenHaarCascadeFile" Canvas.Left="110" Canvas.Top="154" Width="142" Click="GenHaarCascade_Click"/> !-->
         </Canvas>
 

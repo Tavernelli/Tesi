@@ -30,7 +30,7 @@ namespace ToolsGenHaarCascade
         /// <summary>
         /// Current status text to display
         /// </summary>
-        private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GitHub\\Tesi\\OGGETTI";
 
         public MainWindow()
         {
@@ -52,8 +52,30 @@ namespace ToolsGenHaarCascade
             startInfo.Arguments = args;
             process.StartInfo = startInfo;
             process.Start();
-           // process.WaitForExit(2000);
+           // process.WaitForExit(5000);
         }
+
+        private void textBoxInteger_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextBoxTextAllowed(e.Text);
+        }
+
+        private void textBoxInteger_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String Text1 = (String)e.DataObject.GetData(typeof(String));
+                if (!TextBoxTextAllowed(Text1)) e.CancelCommand();
+            }
+            else e.CancelCommand();
+        }
+
+        private Boolean TextBoxTextAllowed(String Text2)
+        {
+            return Array.TrueForAll<Char>(Text2.ToCharArray(),
+                delegate (Char c) { return Char.IsDigit(c) || Char.IsControl(c); });
+        }
+
 
         private void TakeFile_Click(object sender, EventArgs e)
         {
@@ -78,6 +100,9 @@ namespace ToolsGenHaarCascade
                 {
                     Directory.Delete(Directorypath, true);
                 }
+
+                int w = Int32.Parse(textBoxWidth.GetLineText(0));
+                int h = Int32.Parse(textBoxHeight.GetLineText(0));
                 // Try to create the directory.
                 DirectoryInfo di = Directory.CreateDirectory(Directorypath);
                 OpenApplicationWithArguments(
@@ -85,7 +110,7 @@ namespace ToolsGenHaarCascade
                     "opencv_traincascade.exe",
                     " -data DATA1"
                     + " -vec " + sSelectedFile
-                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg " + NumNeg.GetLineText(0) + " -numStages "+ NumStage.GetLineText(0) + " -w 60 -h 40 -mode ALL -numThreads 4"
+                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg " + NumNeg.GetLineText(0) + " -numStages "+ NumStage.GetLineText(0) + " -w " + w + " -h " + h + " -mode ALL -numThreads 4"
 
                 );
 

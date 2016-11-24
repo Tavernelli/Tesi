@@ -52,7 +52,7 @@
         /// <summary>
         /// Current status text to display
         /// </summary>
-        private string savePathImages = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        private string savePathImages = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GitHub\\Tesi\\OGGETTI";
 
         /// <summary>
         /// Draw update timer
@@ -212,7 +212,7 @@
 
                 if(boxToTakeImage != null)
                 {
-                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 2), boxToTakeImage.Box);
+                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 4), boxToTakeImage.Box);
                 }
             }
         }
