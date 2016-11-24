@@ -118,7 +118,7 @@
             Content="Select Folder to save Samples:" 
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom"
-            Margin="215,0,0,62" Width="170" />
+            Margin="203,0,0,62" Width="177" />
         <Button x:Name="button" Content="Browse" HorizontalAlignment="Right" Margin="0,0,10,64" VerticalAlignment="Bottom" Width="66" Click="Browse_Click"/>
         <TextBox x:Name="StampaSamplesPath" HorizontalAlignment="Right" Height="23" Margin="0,0,9,37" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="236"/>
 
