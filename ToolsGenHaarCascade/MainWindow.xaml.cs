@@ -46,7 +46,7 @@ namespace ToolsGenHaarCascade
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
            // startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = System.IO.Path.GetDirectoryName(sSelectedFile) + "\\" + appName;
+            startInfo.FileName = Directory.GetCurrentDirectory() + "\\" + appName;
         
             startInfo.WorkingDirectory = workingDir;
             startInfo.Arguments = args;
@@ -90,25 +90,31 @@ namespace ToolsGenHaarCascade
             { 
                 sSelectedFile = dialog.FileName;
                 //write output
-                string path = System.IO.Path.GetDirectoryName(sSelectedFile);
+                string outputPath = System.IO.Path.GetDirectoryName(sSelectedFile);
+
+                // directory name
+                string dirName = "CASCADE@" + System.IO.Path.GetFileNameWithoutExtension( sSelectedFile );
 
                 // Specify the directory you want to manipulate.
-                string Directorypath = System.IO.Path.GetDirectoryName(sSelectedFile) + "\\" + "DATA1";
+                string directorypath = outputPath + "\\" + dirName;
                 
                 // Determine whether the directory exists.
-                if (Directory.Exists(Directorypath))
+                if (Directory.Exists(directorypath))
                 {
-                    Directory.Delete(Directorypath, true);
+                    // Delete old dir
+                    Directory.Delete(directorypath, true);
                 }
+
+                // Create the directory.
+                DirectoryInfo di = Directory.CreateDirectory(directorypath);
 
                 int w = Int32.Parse(textBoxWidth.GetLineText(0));
                 int h = Int32.Parse(textBoxHeight.GetLineText(0));
-                // Try to create the directory.
-                DirectoryInfo di = Directory.CreateDirectory(Directorypath);
+
                 OpenApplicationWithArguments(
-                    System.IO.Path.GetDirectoryName(sSelectedFile),
-                    "opencv_traincascade.exe",
-                    " -data DATA1"
+                    outputPath,
+                    "\\Tools\\opencv_traincascade.exe",
+                      " -data " + dirName
                     + " -vec " + sSelectedFile
                     + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg " + NumNeg.GetLineText(0) + " -numStages "+ NumStage.GetLineText(0) + " -w " + w + " -h " + h + " -mode ALL -numThreads 4"
 

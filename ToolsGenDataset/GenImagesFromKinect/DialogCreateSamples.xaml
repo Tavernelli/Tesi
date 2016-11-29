@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.ColorBasics"
         mc:Ignorable="d"
-        Title="DialogCreateSamples" Height="528.252" Width="468.694">
+        Title="DialogCreateSamples" Height="511.452" Width="522.694">
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
@@ -47,7 +47,7 @@
         </Style>
 
     </Window.Resources>
-    <Grid RenderTransformOrigin="0.5,0.5">
+    <Grid RenderTransformOrigin="0.5,0.5" Margin="0,0,0,-3">
         <Grid.RenderTransform>
             <TransformGroup>
                 <ScaleTransform/>
@@ -79,17 +79,17 @@
             Content="Show"
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom"
-            Margin="57,0,0,11" RenderTransformOrigin="-0.151,-0.104" 
+            Margin="201,0,0,11" RenderTransformOrigin="-0.151,-0.104" 
             />
         <Label x:Name="labelBoxWidth" 
             Content="Width" 
             HorizontalAlignment="Left" 
             VerticalAlignment="Bottom"
-            Margin="10,0,0,60" Width="47" />
+            Margin="10,0,0,69" Width="47" />
         <TextBox
             x:Name="textBoxWidth"
             Height="23" 
-            Margin="57,0,0,59" 
+            Margin="57,0,0,68" 
             TextWrapping="Wrap" 
             Text="30"
             HorizontalAlignment="Left" 
@@ -100,13 +100,13 @@
             />
         <Label x:Name="labelBoxHeight" 
                Content="Height&#xD;&#xA;"
-               Margin="10,0,0,35" 
+               Margin="10,0,0,44" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Bottom" Height="25" Width="47"
                />
         <TextBox x:Name="textBoxHeight"
                  Height="23" 
-                 Margin="57,0,0,32" 
+                 Margin="57,0,0,41" 
                  TextWrapping="Wrap" 
                  Text="20" 
                  HorizontalAlignment="Left" 
@@ -116,11 +116,18 @@
                  Width="120"/>
         <Label x:Name="labelBoxWidth_Copy" 
             Content="Select Folder to save Samples:" 
-            HorizontalAlignment="Left" 
+            HorizontalAlignment="Right" 
             VerticalAlignment="Bottom"
-            Margin="203,0,0,62" Width="177" />
+            Margin="0,0,82,64" Width="177" />
         <Button x:Name="button" Content="Browse" HorizontalAlignment="Right" Margin="0,0,10,64" VerticalAlignment="Bottom" Width="66" Click="Browse_Click"/>
         <TextBox x:Name="StampaSamplesPath" HorizontalAlignment="Right" Height="23" Margin="0,0,9,37" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="236"/>
+        <TextBox x:Name="Vecname" HorizontalAlignment="Left" Height="23" Margin="58,0,0,9" TextWrapping="Wrap" Text="Vec" VerticalAlignment="Bottom" Width="120"/>
+        <Label x:Name="VecName" 
+            Content="Vec"
+            Margin="10,0,0,9" 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Bottom" Height="25" Width="47"
+               />
 
     </Grid>
 </Window>

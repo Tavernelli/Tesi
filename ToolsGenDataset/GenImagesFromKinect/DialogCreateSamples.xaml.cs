@@ -36,7 +36,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
         /// <summary>
         /// Current status text to display
         /// </summary>
-        private string SamplesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        private string SamplesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GitHub\\Tesi";
 
         //Attribute
         private List<FieldList> DataFieldList { get; set; }
@@ -122,7 +122,7 @@ namespace Microsoft.Samples.Kinect.ColorBasics
             //get values
             int w = Int32.Parse(textBoxWidth.GetLineText(0));
             int h = Int32.Parse(textBoxHeight.GetLineText(0));
-            String Samples = SamplesPath + "\\test.vec";
+            String Samples = SamplesPath + "\\" + Vecname.Text + ".vec";
             //write output
             File.WriteAllText(savePathImages + "\\temp_out_files.info", String.Join("\n", namePathImages.ToArray()));
             if (checkBox.IsChecked == false)

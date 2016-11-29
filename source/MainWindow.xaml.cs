@@ -14,6 +14,7 @@
     using System.Windows.Threading;
     using System.Windows.Forms;
     using System.IO;
+    using System.Globalization;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -146,30 +147,44 @@
         private string sSelectedFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\GitHub\\Tesi\\OGGETTI";
 
 
+        //Last object clissified
+        ClassifiedObject currentObjectClassified = new ClassifiedObject();
+
         //CASCADE CLASSIFIER
-      
-        
-        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml"); //CascadeDIdefault(bicchiere)
+        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml"); 
       
         //Upload model Button
         private void UploadModel_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "All Files (*.xml)|*.xml";
-            dialog.FilterIndex = 1;
-            dialog.Multiselect = true;
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                sSelectedFile = dialog.FileName;
-                cClassifierCurrent = new CascadeClassifier(sSelectedFile);
+                string pathDir  = dialog.SelectedPath;
+                string pathFile = pathDir + "\\cascade.xml";
+                if (File.Exists(pathFile))
+                {
+                    //open model
+                    sSelectedFile = pathFile;
+                    cClassifierCurrent = new CascadeClassifier(sSelectedFile);
+                    //get name of object
+                    string[] pathsplit = pathDir.Split('@');
+                    //if splitted:
+                    if(pathsplit.Length > 1)
+                    {
+                        currentObjectClassified.name = pathsplit[1];
+                    }
+                    else
+                    {
+                        currentObjectClassified.name = "";
+                    }
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Not found cascade.xml in:\n" + pathDir, "Error to load model", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
         }
-
-
-        //LAST OBJECT GETTED BY TYPES
-        ClassifiedObject glassObjectClassified = new ClassifiedObject();
-        ClassifiedObject milkObjectClassified = new ClassifiedObject();
 
         //Image scene
         private WriteableBitmap colorImageToDraw = null;
@@ -381,13 +396,30 @@
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
                 }
                 // Draw a transparent background to set the render size
-                if (glassObjectClassified.feature.Equals( "draw" ))
+                if (currentObjectClassified.feature.Equals( "draw" ))
                 {
-                    Rect rect = new Rect(glassObjectClassified.rectangle.X,
-                                         glassObjectClassified.rectangle.Y,
-                                         glassObjectClassified.rectangle.Width,
-                                         glassObjectClassified.rectangle.Height);
+                    Rect rect = new Rect(currentObjectClassified.rectangle.X,
+                                         currentObjectClassified.rectangle.Y,
+                                         currentObjectClassified.rectangle.Width,
+                                         currentObjectClassified.rectangle.Height);
                     dc.DrawRectangle(null, new Pen(Brushes.Orange, 4), rect);
+                    //name?
+                    if(currentObjectClassified.name.Length > 0)
+                    {
+                        FormattedText formattedTest = new FormattedText
+                        (
+                            currentObjectClassified.name,
+                            CultureInfo.GetCultureInfo("en-us"),
+                            System.Windows.FlowDirection.LeftToRight,
+                            new Typeface("Verdana"),
+                            40,
+                            Brushes.DarkOrange
+                        );
+                        dc.DrawText(formattedTest, 
+                                    new Point(currentObjectClassified.rectangle.X,
+                                              currentObjectClassified.rectangle.Y-45));
+                    }
+
                 }
                 if(this.bodies != null)
                 {
@@ -487,36 +519,19 @@
                         //Image to gray scale
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
                         ///////////////////////////////////////////////////////////////////
-                        
                         System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
-#if false
-                        System.Drawing.Rectangle[] gettedMilks = cClassifierMilk.DetectMultiScale(grayframe, 1.1, 5, new System.Drawing.Size(40, 60), new System.Drawing.Size(170, 260));
-#endif
                         ///////////////////////////////////////////////////////////////////
                         //glasses objects
-                        glassObjectClassified.feature = "nodraw";
+                        currentObjectClassified.feature = "nodraw";
                         foreach (var rectObj in gettedObjects)
                         {
                             //take center
-                            glassObjectClassified.rectangle = rectObj;
-                            glassObjectClassified.ScaleRectangle(scaleFactor);
-                            glassObjectClassified.z = 0.0; //todo
-                            glassObjectClassified.rotation = 0.0; //todo
-                            glassObjectClassified.feature = "draw";
+                            currentObjectClassified.rectangle = rectObj;
+                            currentObjectClassified.ScaleRectangle(scaleFactor);
+                            currentObjectClassified.z = 0.0; //todo
+                            currentObjectClassified.rotation = 0.0; //todo
+                            currentObjectClassified.feature = "draw";
                         }
-#if false
-                        milkObjectClassified.feature = "nodraw";
-                        //milk objects
-                        foreach (var rectMilk in gettedMilks)
-                        {
-                            //take center
-                            milkObjectClassified.rectangle = rectMilk;
-                            milkObjectClassified.ScaleRectangle(scaleFactor);
-                            milkObjectClassified.z = 0.0; //todo
-                            milkObjectClassified.rotation = 0.0; //todo
-                            milkObjectClassified.feature = "draw";
-                        }
-#endif
                     }
                 }
             }

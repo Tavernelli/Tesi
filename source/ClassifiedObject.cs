@@ -9,6 +9,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double mZ = 0;
         private double mRot = 0;
         private string mFeature = "";
+        private string mName = "";
 
         public ClassifiedObject(){ }
 
@@ -74,6 +75,20 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 return mFeature;
             }
         }
+
+        //Nome of object
+        public string name
+        {
+            set
+            {
+                mName = value;
+            }
+            get
+            {
+                return mName;
+            }
+        }
+
 
         // rectangle,z and rotation to 0
         public void SetAllToZero()
