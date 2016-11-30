@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToolsGenHaarCascade"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="369" ResizeMode="NoResize">
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
@@ -30,19 +30,20 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Canvas HorizontalAlignment="Left" Height="299" Margin="10,10,0,0" VerticalAlignment="Top" Width="507">
-            <Button x:Name="SelectFile" Style="{StaticResource CreateDataButton}"  Content="Select File" Canvas.Left="213" Canvas.Top="269" Width="75" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="TakeFile_Click"/>
+    <Grid Margin="0,0,2,0">
+        <Canvas HorizontalAlignment="Center" Height="300" Margin="10" VerticalAlignment="Center" Width="340">
+            <Button x:Name="SelectFile" Style="{StaticResource CreateDataButton}"  Content="Select File" Canvas.Left="140" Canvas.Top="270" Width="65" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="TakeFile_Click" RenderTransformOrigin="1.309,3.2"/>
             <Label x:Name="label" Content="Inserisci numero positivi: " Canvas.Left="36" Canvas.Top="34" Width="143"/>
             <TextBox x:Name="NumPos" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="37" Width="120"/>
             <TextBox x:Name="NumNeg" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="77" Width="120"/>
-            <Label x:Name="label_Copy" Content="Inserisci numero negativi: " Canvas.Left="37" Canvas.Top="75" Width="143"/>
+            <Label x:Name="label_Copy" Content="Inserisci numero negativi: " Canvas.Left="36" Canvas.Top="74" Width="143"/>
             <TextBox x:Name="NumStage" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="117" Width="120"/>
-            <Label x:Name="label_Copy1" Content="Inserisci numero Stage: " Canvas.Left="37" Canvas.Top="115" Width="143"/>
-            <Label x:Name="label1" Content="Width" Canvas.Left="42" Canvas.Top="154"/>
-            <Label x:Name="label2" Content="Height" Canvas.Left="43" Canvas.Top="192"/>
-            <TextBox x:Name="textBoxWidth" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="60" Canvas.Top="154" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput"  DataObject.Pasting="textBoxInteger_Pasting"/>
-            <TextBox x:Name="textBoxHeight" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="40" Canvas.Top="192" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput" DataObject.Pasting="textBoxInteger_Pasting"/>
+            <Label x:Name="label_Copy1" Content="Inserisci numero Stage: " Canvas.Left="36" Canvas.Top="114" Width="143"/>
+            <Label x:Name="label1" Content="Width" Canvas.Left="36" Canvas.Top="159"/>
+            <Label x:Name="label2" Content="Height" Canvas.Left="36" Canvas.Top="197"/>
+            <TextBox x:Name="textBoxWidth" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="154" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput"  DataObject.Pasting="textBoxInteger_Pasting"/>
+            <TextBox x:Name="textBoxHeight" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="192" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput" DataObject.Pasting="textBoxInteger_Pasting"/>
+            <CheckBox x:Name="Delete" Content="Clean output" Canvas.Left="190" Canvas.Top="235"/>
             <!--<Button x:Name="GenHaarCascadeFile" Style="{StaticResource CreateDataButton}"  Content="GenHaarCascadeFile" Canvas.Left="110" Canvas.Top="154" Width="142" Click="GenHaarCascade_Click"/> !-->
         </Canvas>
 

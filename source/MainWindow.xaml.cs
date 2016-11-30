@@ -402,7 +402,7 @@
                                          currentObjectClassified.rectangle.Y,
                                          currentObjectClassified.rectangle.Width,
                                          currentObjectClassified.rectangle.Height);
-                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 4), rect);
+                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
                     //name?
                     if(currentObjectClassified.name.Length > 0)
                     {
@@ -411,13 +411,20 @@
                             currentObjectClassified.name,
                             CultureInfo.GetCultureInfo("en-us"),
                             System.Windows.FlowDirection.LeftToRight,
-                            new Typeface("Verdana"),
+                            new Typeface("Arial Bold"),
                             40,
-                            Brushes.DarkOrange
+                            Brushes.White
                         );
-                        dc.DrawText(formattedTest, 
+                        
+                        //draw background of name Object.
+                        dc.DrawRoundedRectangle(Brushes.Orange, null, 
+                        new Rect(currentObjectClassified.rectangle.X - 4, 
+                        currentObjectClassified.rectangle.Y-60, 250, 60), 10.0, 10.0);
+
+                        //draw name of Object.
+                        dc.DrawText(formattedTest,
                                     new Point(currentObjectClassified.rectangle.X,
-                                              currentObjectClassified.rectangle.Y-45));
+                                              currentObjectClassified.rectangle.Y - 60));
                     }
 
                 }

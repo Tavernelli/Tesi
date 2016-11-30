@@ -55,6 +55,8 @@ namespace ToolsGenHaarCascade
            // process.WaitForExit(5000);
         }
 
+
+        //metods that block string input only num!! 
         private void textBoxInteger_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !TextBoxTextAllowed(e.Text);
@@ -74,6 +76,26 @@ namespace ToolsGenHaarCascade
         {
             return Array.TrueForAll<Char>(Text2.ToCharArray(),
                 delegate (Char c) { return Char.IsDigit(c) || Char.IsControl(c); });
+        }
+
+
+        static private bool GetValueFromTextBox(System.Windows.Controls.TextBox tbox,String errorTitle,String errorDesc, ref int outvalue)
+        {
+            try
+            {
+                outvalue  = Int32.Parse(tbox.GetLineText(0));
+                return true;
+            }
+            catch (Exception)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    errorDesc,
+                    errorTitle,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
+            }
+
         }
 
 
@@ -97,26 +119,48 @@ namespace ToolsGenHaarCascade
 
                 // Specify the directory you want to manipulate.
                 string directorypath = outputPath + "\\" + dirName;
-                
+
                 // Determine whether the directory exists.
-                if (Directory.Exists(directorypath))
+                if (Directory.Exists(directorypath) && Delete.IsChecked == true)
                 {
                     // Delete old dir
                     Directory.Delete(directorypath, true);
                 }
+                // Get the directory info
+                DirectoryInfo di = null;
+                
+                // Create the directory if necessary
+                if (Directory.Exists(directorypath))
+                    di = new DirectoryInfo(directorypath);
+                else
+                    di = Directory.CreateDirectory(directorypath);
 
-                // Create the directory.
-                DirectoryInfo di = Directory.CreateDirectory(directorypath);
+                //image size
+                int npos = 0;
+                int nneg = 0;
+                int nstages = 0;
+                int w = 0;
+                int h = 0;
 
-                int w = Int32.Parse(textBoxWidth.GetLineText(0));
-                int h = Int32.Parse(textBoxHeight.GetLineText(0));
+                //try to read values
+                if (!GetValueFromTextBox(NumPos, "Error input value", "Wrong number of positive", ref npos)) return;
+                if (!GetValueFromTextBox(NumNeg, "Error input value", "Wrong number of negative", ref nneg)) return;
+                if (!GetValueFromTextBox(NumStage, "Error input value", "Wrong number of stages", ref nstages)) return;
+                if (!GetValueFromTextBox(textBoxWidth, "Error input value", "Wrong width value", ref w)) return;
+                if (!GetValueFromTextBox(textBoxHeight, "Error input value", "Wrong height value", ref h)) return;
+
 
                 OpenApplicationWithArguments(
                     outputPath,
                     "\\Tools\\opencv_traincascade.exe",
-                      " -data " + dirName
+                        " -data " + dirName
                     + " -vec " + sSelectedFile
-                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0) + " -numNeg " + NumNeg.GetLineText(0) + " -numStages "+ NumStage.GetLineText(0) + " -w " + w + " -h " + h + " -mode ALL -numThreads 4"
+                    + " -bg bg.txt -numPos " + NumPos.GetLineText(0)
+                    + " -numNeg " + NumNeg.GetLineText(0)
+                    + " -numStages " + NumStage.GetLineText(0)
+                    + " -w " + w
+                    + " -h " + h
+                    + " -mode ALL -numThreads 4"
 
                 );
 
