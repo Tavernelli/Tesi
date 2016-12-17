@@ -15,6 +15,8 @@
     using System.Windows.Forms;
     using System.IO;
     using System.Globalization;
+    using System.Net.Sockets;
+    using System.Net;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -211,7 +213,7 @@
 
             // create the bitmap to display
             this.colorImageToDraw = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
-
+            
 
             // get size of joint space
             this.displayWidth = frameDescription.Width;
@@ -390,7 +392,8 @@
             //draw object
             using (DrawingContext dc = this.drawingGroup.Open())
             {
-                if (this.colorImageToDraw != null)
+               
+                if ( this.colorImageToDraw != null)
                 {
                     // Draw background to set the render size
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
@@ -425,8 +428,9 @@
                         dc.DrawText(formattedTest,
                                     new Point(currentObjectClassified.rectangle.X,
                                               currentObjectClassified.rectangle.Y - 60));
+                        
                     }
-
+                    
                 }
                 if(this.bodies != null)
                 {
@@ -471,6 +475,8 @@
             }
         }
 
+      
+
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -478,7 +484,7 @@
         /// <param name="e">event arguments</param>
         private void Color_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
-
+            
             using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
             {
 
@@ -492,7 +498,10 @@
                         using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                         {
                             //lock image
+                            
+                            
                             this.colorImageToDraw.Lock();
+                            
                             // verify data and write the new color frame data to the display bitmap
                             if ((colorFrameDescription.Width == this.colorImageToDraw.PixelWidth) &&
                                 (colorFrameDescription.Height == this.colorImageToDraw.PixelHeight))
@@ -501,6 +510,7 @@
                                     (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
                                     ColorImageFormat.Bgra
                                 );
+
                                 this.colorImageToDraw.AddDirtyRect(new Int32Rect(0, 0, this.colorImageToDraw.PixelWidth, this.colorImageToDraw.PixelHeight));
                             }
                             //unlock
@@ -519,12 +529,18 @@
                         int scaleFactor = 2;
                         //K image to Emgu image
                         Image<Bgr, Byte> frameImg = Kimage2CVimg(colorFrame);
+                        //choose contrast 
+                        frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
+
                         //Rescale
                         frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
+                        salvataggioFile( frameImg.ToBitmap());
+
                         //Flip image (?)
                         //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
                         //Image to gray scale
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
+                        
                         ///////////////////////////////////////////////////////////////////
                         System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
                         ///////////////////////////////////////////////////////////////////
@@ -543,203 +559,324 @@
                 }
             }
         }
-        
+
+          // per salvare foto su cartella
+     
+          private void salvataggioFile(System.Drawing.Bitmap frameImg)
+          {
+            System.Drawing.Bitmap wmp;
+            wmp = frameImg;
+           
+             string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "img/Image"+".png");
+              wmp.Save(path);
+
+        }
+
         //funzione che trasforma il frame nel formato di Emgu
         public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg (ColorFrame frame)
-        {
-            
-            var width = frame.FrameDescription.Width;
-            var heigth = frame.FrameDescription.Height;
-            var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
-            frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
- 
-            var bitmap = new System.Drawing.Bitmap (width, heigth, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),  ImageLockMode.WriteOnly,  bitmap.PixelFormat);
-            Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
-            bitmap.UnlockBits(bitmapData);
+          {
+
+              var width = frame.FrameDescription.Width;
+              var heigth = frame.FrameDescription.Height;
+              var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
+              frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
+
+              var bitmap = new System.Drawing.Bitmap (width, heigth, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+              var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),  ImageLockMode.WriteOnly,  bitmap.PixelFormat);
+              Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
+              bitmap.UnlockBits(bitmapData);
+
+              return new Emgu.CV.Image <Bgr, Byte> (bitmap);
+          }
+
+
+          /// <summary>
+          /// Handles the body frame data arriving from the sensor
+          /// </summary>
+          /// <param name="sender">object sending the event</param>
+          /// <param name="e">event arguments</param>
+          private void Body_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+          {
+              bool dataReceived = false;
+
+              using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
+              {
+                  if (bodyFrame != null)
+                  {
+                      if (this.bodies == null)
+                      {
+                          this.bodies = new Body[bodyFrame.BodyCount];
+                      }
+                      // The first time GetAndRefreshBodyData is called, Kinect will allocate each Body in the array.
+                      // As long as those body objects are not disposed and not set to null in the array,
+                      // those body objects will be re-used.
+                      bodyFrame.GetAndRefreshBodyData(this.bodies);
+                      dataReceived = true;
+                  }
+              }
+
+              if (dataReceived)
+              {
+
+              }
+          }
+
+          /// <summary>
+          /// Draws a body
+          /// </summary>
+          /// <param name="joints">joints to draw</param>
+          /// <param name="jointPoints">translated positions of joints to draw</param>
+          /// <param name="drawingContext">drawing context to draw to</param>
+          /// <param name="drawingPen">specifies color to draw a specific body</param>
+          private void DrawBody(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen)
+          {
+              // Draw the bones
+              foreach (var bone in this.bones)
+              {
+                  this.DrawBone(joints, jointPoints, bone.Item1, bone.Item2, drawingContext, drawingPen);
+              }
+
+              // Draw the joints
+              foreach (JointType jointType in joints.Keys)
+              {
+                  Brush drawBrush = null;
+
+                  TrackingState trackingState = joints[jointType].TrackingState;
+
+                  if (trackingState == TrackingState.Tracked)
+                  {
+                      drawBrush = this.trackedJointBrush;
+                  }
+                  else if (trackingState == TrackingState.Inferred)
+                  {
+                      drawBrush = this.inferredJointBrush;
+                  }
+
+                  if (drawBrush != null)
+                  {
+                      drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
+                  }
+              }
+          }
+
+          /// <summary>
+          /// Draws one bone of a body (joint to joint)
+          /// </summary>
+          /// <param name="joints">joints to draw</param>
+          /// <param name="jointPoints">translated positions of joints to draw</param>
+          /// <param name="jointType0">first joint of bone to draw</param>
+          /// <param name="jointType1">second joint of bone to draw</param>
+          /// <param name="drawingContext">drawing context to draw to</param>
+          /// /// <param name="drawingPen">specifies color to draw a specific bone</param>
+          private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
+          {
+              Joint joint0 = joints[jointType0];
+              Joint joint1 = joints[jointType1];
+
+              // If we can't find either of these joints, exit
+              if (joint0.TrackingState == TrackingState.NotTracked ||
+                  joint1.TrackingState == TrackingState.NotTracked)
+              {
+                  return;
+              }
+
+              // We assume all drawn bones are inferred unless BOTH joints are tracked
+              Pen drawPen = this.inferredBonePen;
+              if ((joint0.TrackingState == TrackingState.Tracked) && (joint1.TrackingState == TrackingState.Tracked))
+              {
+                  drawPen = drawingPen;
+              }
+
+              drawingContext.DrawLine(drawPen, jointPoints[jointType0], jointPoints[jointType1]);
+          }
+
+          /// <summary>
+          /// Draws a hand symbol if the hand is tracked: red circle = closed, green circle = opened; blue circle = lasso
+          /// </summary>
+          /// <param name="handState">state of the hand</param>
+          /// <param name="handPosition">position of the hand</param>
+          /// <param name="drawingContext">drawing context to draw to</param>
+          private void DrawHand(HandState handState, Point handPosition, DrawingContext drawingContext)
+          {
+              switch (handState)
+              {
+                  case HandState.Closed:
+                      drawingContext.DrawEllipse(this.handClosedBrush, null, handPosition, HandSize, HandSize);
+                      break;
+
+                  case HandState.Open:
+                      drawingContext.DrawEllipse(this.handOpenBrush, null, handPosition, HandSize, HandSize);
+                      break;
+
+                  case HandState.Lasso:
+                      drawingContext.DrawEllipse(this.handLassoBrush, null, handPosition, HandSize, HandSize);
+                      break;
+              }
+          }
+
+          /// <summary>
+          /// Draws indicators to show which edges are clipping body data
+          /// </summary>
+          /// <param name="body">body to draw clipping information for</param>
+          /// <param name="drawingContext">drawing context to draw to</param>
+          private void DrawClippedEdges(Body body, DrawingContext drawingContext)
+          {
+              FrameEdges clippedEdges = body.ClippedEdges;
+
+              if (clippedEdges.HasFlag(FrameEdges.Bottom))
+              {
+                  drawingContext.DrawRectangle(
+                      Brushes.Red,
+                      null,
+                      new Rect(0, this.displayHeight - ClipBoundsThickness, this.displayWidth, ClipBoundsThickness));
+              }
+
+              if (clippedEdges.HasFlag(FrameEdges.Top))
+              {
+                  drawingContext.DrawRectangle(
+                      Brushes.Red,
+                      null,
+                      new Rect(0, 0, this.displayWidth, ClipBoundsThickness));
+              }
+
+              if (clippedEdges.HasFlag(FrameEdges.Left))
+              {
+                  drawingContext.DrawRectangle(
+                      Brushes.Red,
+                      null,
+                      new Rect(0, 0, ClipBoundsThickness, this.displayHeight));
+              }
+
+              if (clippedEdges.HasFlag(FrameEdges.Right))
+              {
+                  drawingContext.DrawRectangle(
+                      Brushes.Red,
+                      null,
+                      new Rect(this.displayWidth - ClipBoundsThickness, 0, ClipBoundsThickness, this.displayHeight));
+              }
+          }
+
+
+          /// <summary>
+          /// Handles the event which the sensor becomes unavailable (E.g. paused, closed, unplugged).
+          /// </summary>
+          /// <param name="sender">object sending the event</param>
+          /// <param name="e">event arguments</param>
+          private void Sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
+          {
+              // on failure, set the status text
+              this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
+                                                              : Properties.Resources.SensorNotAvailableStatusText;
+          }
+          private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
+          
+
+          private void button1_Click(object sender, RoutedEventArgs e)
+          {
+                 
+                  string name = null;
+                  string _height = null;
+                  string _Width = null;
+                  if (currentObjectClassified.feature.Equals("draw"))
+                  {
+                      name = currentObjectClassified.name;
+                      _height = (currentObjectClassified.rectangle.Height/112).ToString();
+                      _Width = (currentObjectClassified.rectangle.Width /112).ToString();
                 
-            return new Emgu.CV.Image <Bgr, Byte> (bitmap);
-        }
+                  }
 
+                Server TCPServer = new Server(name, tcpListener, _height, _Width);       
+          }
 
-        /// <summary>
-        /// Handles the body frame data arriving from the sensor
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-        private void Body_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        //open new window (cut depth)
+        private void button2_Click(object sender, EventArgs e)
         {
-            bool dataReceived = false;
-
-            using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
-            {
-                if (bodyFrame != null)
-                {
-                    if (this.bodies == null)
-                    {
-                        this.bodies = new Body[bodyFrame.BodyCount];
-                    }
-                    // The first time GetAndRefreshBodyData is called, Kinect will allocate each Body in the array.
-                    // As long as those body objects are not disposed and not set to null in the array,
-                    // those body objects will be re-used.
-                    bodyFrame.GetAndRefreshBodyData(this.bodies);
-                    dataReceived = true;
-                }
-            }
-
-            if (dataReceived)
-            {
-               
-            }
+            Windowdepth win2 = new Windowdepth();
+            win2.Show();
+           
         }
 
-        /// <summary>
-        /// Draws a body
-        /// </summary>
-        /// <param name="joints">joints to draw</param>
-        /// <param name="jointPoints">translated positions of joints to draw</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        /// <param name="drawingPen">specifies color to draw a specific body</param>
-        private void DrawBody(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen)
-        {
-            // Draw the bones
-            foreach (var bone in this.bones)
-            {
-                this.DrawBone(joints, jointPoints, bone.Item1, bone.Item2, drawingContext, drawingPen);
-            }
 
-            // Draw the joints
-            foreach (JointType jointType in joints.Keys)
-            {
-                Brush drawBrush = null;
+        // Contrast changer method
+        public static Emgu.CV.Image<Bgr, Byte> Contrast(System.Drawing.Bitmap sourceBitmap, int threshold)
+          {
+              BitmapData sourceData = sourceBitmap.LockBits(new System.Drawing.Rectangle(0, 0,
+                                          sourceBitmap.Width, sourceBitmap.Height),
+                                          ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                TrackingState trackingState = joints[jointType].TrackingState;
 
-                if (trackingState == TrackingState.Tracked)
-                {
-                    drawBrush = this.trackedJointBrush;
-                }
-                else if (trackingState == TrackingState.Inferred)
-                {
-                    drawBrush = this.inferredJointBrush;
-                }
+              byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
 
-                if (drawBrush != null)
-                {
-                    drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
-                }
-            }
-        }
 
-        /// <summary>
-        /// Draws one bone of a body (joint to joint)
-        /// </summary>
-        /// <param name="joints">joints to draw</param>
-        /// <param name="jointPoints">translated positions of joints to draw</param>
-        /// <param name="jointType0">first joint of bone to draw</param>
-        /// <param name="jointType1">second joint of bone to draw</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        /// /// <param name="drawingPen">specifies color to draw a specific bone</param>
-        private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
-        {
-            Joint joint0 = joints[jointType0];
-            Joint joint1 = joints[jointType1];
+              Marshal.Copy(sourceData.Scan0, pixelBuffer, 0, pixelBuffer.Length);
 
-            // If we can't find either of these joints, exit
-            if (joint0.TrackingState == TrackingState.NotTracked ||
-                joint1.TrackingState == TrackingState.NotTracked)
-            {
-                return;
-            }
 
-            // We assume all drawn bones are inferred unless BOTH joints are tracked
-            Pen drawPen = this.inferredBonePen;
-            if ((joint0.TrackingState == TrackingState.Tracked) && (joint1.TrackingState == TrackingState.Tracked))
-            {
-                drawPen = drawingPen;
-            }
+              sourceBitmap.UnlockBits(sourceData);
 
-            drawingContext.DrawLine(drawPen, jointPoints[jointType0], jointPoints[jointType1]);
-        }
 
-        /// <summary>
-        /// Draws a hand symbol if the hand is tracked: red circle = closed, green circle = opened; blue circle = lasso
-        /// </summary>
-        /// <param name="handState">state of the hand</param>
-        /// <param name="handPosition">position of the hand</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawHand(HandState handState, Point handPosition, DrawingContext drawingContext)
-        {
-            switch (handState)
-            {
-                case HandState.Closed:
-                    drawingContext.DrawEllipse(this.handClosedBrush, null, handPosition, HandSize, HandSize);
-                    break;
+              double contrastLevel = Math.Pow((100.0 + threshold) / 100.0, 2);
 
-                case HandState.Open:
-                    drawingContext.DrawEllipse(this.handOpenBrush, null, handPosition, HandSize, HandSize);
-                    break;
 
-                case HandState.Lasso:
-                    drawingContext.DrawEllipse(this.handLassoBrush, null, handPosition, HandSize, HandSize);
-                    break;
-            }
-        }
+              double blue = 0;
+              double green = 0;
+              double red = 0;
 
-        /// <summary>
-        /// Draws indicators to show which edges are clipping body data
-        /// </summary>
-        /// <param name="body">body to draw clipping information for</param>
-        /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawClippedEdges(Body body, DrawingContext drawingContext)
-        {
-            FrameEdges clippedEdges = body.ClippedEdges;
 
-            if (clippedEdges.HasFlag(FrameEdges.Bottom))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, this.displayHeight - ClipBoundsThickness, this.displayWidth, ClipBoundsThickness));
-            }
+              for (int k = 0; k + 4 < pixelBuffer.Length; k += 4)
+              {
+                  blue = ((((pixelBuffer[k] / 255.0) - 0.5) *
+                              contrastLevel) + 0.5) * 255.0;
 
-            if (clippedEdges.HasFlag(FrameEdges.Top))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, this.displayWidth, ClipBoundsThickness));
-            }
 
-            if (clippedEdges.HasFlag(FrameEdges.Left))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(0, 0, ClipBoundsThickness, this.displayHeight));
-            }
+                  green = ((((pixelBuffer[k + 1] / 255.0) - 0.5) *
+                              contrastLevel) + 0.5) * 255.0;
 
-            if (clippedEdges.HasFlag(FrameEdges.Right))
-            {
-                drawingContext.DrawRectangle(
-                    Brushes.Red,
-                    null,
-                    new Rect(this.displayWidth - ClipBoundsThickness, 0, ClipBoundsThickness, this.displayHeight));
-            }
-        }
 
-        /// <summary>
-        /// Handles the event which the sensor becomes unavailable (E.g. paused, closed, unplugged).
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-        private void Sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
-        {
-            // on failure, set the status text
-            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
-                                                            : Properties.Resources.SensorNotAvailableStatusText;
-        }
+                  red = ((((pixelBuffer[k + 2] / 255.0) - 0.5) *
+                              contrastLevel) + 0.5) * 255.0;
 
-     
-    }
-}
+
+                  if (blue > 255)
+                  { blue = 255; }
+                  else if (blue < 0)
+                  { blue = 0; }
+
+
+                  if (green > 255)
+                  { green = 255; }
+                  else if (green < 0)
+                  { green = 0; }
+
+
+                  if (red > 255)
+                  { red = 255; }
+                  else if (red < 0)
+                  { red = 0; }
+
+
+                  pixelBuffer[k] = (byte)blue;
+                  pixelBuffer[k + 1] = (byte)green;
+                  pixelBuffer[k + 2] = (byte)red;
+              }
+
+
+              System.Drawing.Bitmap resultBitmap = new System.Drawing.Bitmap(sourceBitmap.Width, sourceBitmap.Height);
+
+
+              BitmapData resultData = resultBitmap.LockBits(new System.Drawing.Rectangle(0, 0,
+                                          resultBitmap.Width, resultBitmap.Height),
+                                          ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+
+
+              Marshal.Copy(pixelBuffer, 0, resultData.Scan0, pixelBuffer.Length);
+              resultBitmap.UnlockBits(resultData);
+
+
+              return new Emgu.CV.Image<Bgr, Byte> (resultBitmap);
+          }
+
+
+
+      }
+  }
