@@ -32,7 +32,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void ListenForClients()
         {
             this.tcpListener.Start();
-      
+      // while (true)
                 System.Console.WriteLine("Listening...");
                 //blocks until a client has connected to the server
                 TcpClient client = this.tcpListener.AcceptTcpClient();
@@ -41,7 +41,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 //create a thread to handle communications with connected client
                 Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
                 clientThread.Start(client);
-
+       //}
         }
         private void HandleClientComm(object client)
         {
@@ -51,7 +51,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
             byte[] message = new byte[4096];
             int bytesRead;
-            string msg = name + "-" + widthRect + " cm" + "-" + heightRect + " cm";
+            string msg = name + "-" + widthRect + "-" + heightRect;
             while (true)
             {
                 bytesRead = 0;
@@ -101,18 +101,6 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         
     
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
