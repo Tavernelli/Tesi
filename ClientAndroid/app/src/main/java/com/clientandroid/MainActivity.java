@@ -15,10 +15,12 @@ public class MainActivity extends AppCompatActivity {
     TextView responseName;
     TextView responseWidth;
     TextView responseHeight;
+    String address;
+    String port ;
 
 
-   @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         buttonReceve = (Button) findViewById(R.id.button);
@@ -30,11 +32,14 @@ public class MainActivity extends AppCompatActivity {
         clear = (Button) findViewById(R.id.button2);
 
 
-
         buttonReceve.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String address = editTextAddress.getText().toString();
-                String port = editTextPort.getText().toString();
+
+
+                    address = editTextAddress.getText().toString();
+                    port = editTextPort.getText().toString();
+
+
                 if(address.isEmpty() || address.length() == 0 || address.equals("")){
                     editTextAddress.setError("Errore");
 
@@ -50,20 +55,21 @@ public class MainActivity extends AppCompatActivity {
 
                 else
                 {
-                Client task = new Client(address, Integer.parseInt(port), responseName,
-                         responseWidth,
-                         responseHeight);
-                         task.execute();}
+                    Client task = new Client(address, Integer.parseInt(port), responseName,
+                            responseWidth,
+                            responseHeight);
+                    task.execute();}
 
             }
 
         });
 
-       clear.setOnClickListener(new View.OnClickListener() {
+        clear.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 responseName.setText("");
                 responseWidth.setText("");
                 responseHeight.setText("");
+
             }
 
         });
