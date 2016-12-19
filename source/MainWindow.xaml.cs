@@ -566,9 +566,12 @@
           {
             System.Drawing.Bitmap wmp;
             wmp = frameImg;
-           
-             string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "img/Image"+".png");
+
+            string path = @"C:\Users\tavea\Documents\GitHub\Tesi\img\image" + ".png";
               wmp.Save(path);
+            
+            
+
 
         }
 
@@ -876,7 +879,14 @@
               return new Emgu.CV.Image<Bgr, Byte> (resultBitmap);
           }
 
+   
 
 
-      }
+   
+
+        private void OpenFolder(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"C:\Users\tavea\Documents\GitHub\Tesi\img");
+        }
+    }
   }
