@@ -50,15 +50,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            
             if (_reader != null)
             {
                 _reader.Dispose();
+                
             }
 
             if (_sensor != null)
             {
                 _sensor.Close();
             }
+
+            this.Close();
+            MainWindow mw = new MainWindow();
+            
         }
 
         void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)

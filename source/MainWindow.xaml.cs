@@ -783,20 +783,22 @@
                   if (currentObjectClassified.feature.Equals("draw"))
                   {
                       name = currentObjectClassified.name;
-                      _height = (currentObjectClassified.rectangle.Height/112).ToString();
-                      _Width = (currentObjectClassified.rectangle.Width /112).ToString();
+                      _height = ((currentObjectClassified.rectangle.Height/100)*2.54).ToString();
+                      _Width = ((currentObjectClassified.rectangle.Width /100)*2.54).ToString();
                 
                   }
 
-                Server TCPServer = new Server(name, tcpListener, _height, _Width);       
-          }
+                Server TCPServer = new Server(name, tcpListener, _height, _Width);
+            
+
+        }
 
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
             Windowdepth win2 = new Windowdepth();
             win2.Show();
-           
+
         }
 
 
@@ -887,6 +889,30 @@
         private void OpenFolder(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             System.Diagnostics.Process.Start(@"C:\Users\tavea\Documents\GitHub\Tesi\img");
+        }
+
+        private void EventClosed(object sender, EventArgs e)
+        {
+            if (colorFrameReader != null)
+            {
+                colorFrameReader.Dispose();
+
+            }
+            if (bodyFrameReader != null)
+            {
+                bodyFrameReader.Dispose();
+
+            }
+
+            if (kinectSensor != null)
+            {
+                kinectSensor.Close();
+            }
+
+            this.Close();
+            
+
+
         }
     }
   }

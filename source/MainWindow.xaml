@@ -4,7 +4,8 @@
         Title="Body Basics" 
         Height="600" Width="700" 
         Loaded="MainWindow_Loaded"
-        Closing="MainWindow_Closing">
+        Closing="MainWindow_Closing" 
+        Closed="EventClosed">
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
         <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f" />
@@ -34,7 +35,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Grid.Row="0" Source="Images/Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5" />
+        <Image Grid.Row="0" Source="C:\Users\tavea\Documents\GitHub\Tesi\Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5" />
 
         <Viewbox Grid.Row="1" HorizontalAlignment="Center">
             <Image Source="{Binding ImageSource}" Stretch="UniformToFill" />
