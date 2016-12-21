@@ -46,10 +46,12 @@
         <Button x:Name="button" Content="Open Model" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Right" Margin="0,4,93,0" VerticalAlignment="Top" Width="87" Click="UploadModel_Click" Height="18"/>
         <Button x:Name="button1" Content="Send" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,4,0,0" VerticalAlignment="Top" Width="42" Click="button1_Click"/>
         <Button x:Name="button2" Content="CutDepth" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,24,0,0" VerticalAlignment="Top" Width="70" Click="button2_Click"/>
-        <Slider x:Name="slider" HorizontalAlignment="Left" Margin="0,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-100" LargeChange="100" SmallChange="5" />
+        <Slider x:Name="slider" HorizontalAlignment="Left" Margin="0,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-20" LargeChange="100" SmallChange="5" />
         <Label x:Name="label" Content="Increase Contrast:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30" Margin="0,4,0,0"/>
-        <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="176,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-100" LargeChange="100" SmallChange="5" />
+        <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="176,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-100" LargeChange="100" SmallChange="1" />
         <Label x:Name="label_Copy" Content="Brightness:" HorizontalAlignment="Left" Margin="176,4,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30"/>
         <CheckBox x:Name="Show" Content="Show" HorizontalAlignment="Left" Margin="362,32,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1"  HorizontalAlignment="Left" Margin="71,10,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label x:Name="label2"  HorizontalAlignment="Left" Margin="251,10,0,0" Grid.Row="1" VerticalAlignment="Top"/>
     </Grid>
 </Window>

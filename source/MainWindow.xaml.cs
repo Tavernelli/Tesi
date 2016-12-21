@@ -532,6 +532,8 @@
                         //choose contrast 
                         frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
                         frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
+                        label1.Content = (int)slider.Value;
+                        label2.Content = (int)slider1.Value;
                         //Rescale
                         frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
                         if (Show.IsChecked == true) { SaveFile(frameImg.ToBitmap()); }
@@ -809,7 +811,7 @@
                                           sourceBitmap.Width, sourceBitmap.Height),
                                           ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-
+            
               byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
 
 
