@@ -35,7 +35,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Grid.Row="0" Source="C:\Users\tavea\Documents\GitHub\Tesi\Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5" />
 
         <Viewbox Grid.Row="1" HorizontalAlignment="Center">
             <Image Source="{Binding ImageSource}" Stretch="UniformToFill" />
@@ -47,7 +46,10 @@
         <Button x:Name="button" Content="Open Model" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Right" Margin="0,4,93,0" VerticalAlignment="Top" Width="87" Click="UploadModel_Click" Height="18"/>
         <Button x:Name="button1" Content="Send" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,4,0,0" VerticalAlignment="Top" Width="42" Click="button1_Click"/>
         <Button x:Name="button2" Content="CutDepth" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,24,0,0" VerticalAlignment="Top" Width="70" Click="button2_Click"/>
-        <Slider x:Name="slider" HorizontalAlignment="Left" Margin="0,27,0,0" VerticalAlignment="Top" Width="166" Maximum="1000" MouseRightButtonDown="OpenFolder" />
-        <Label x:Name="label" Content="Increase Contrast:" HorizontalAlignment="Left" Margin="0,-3,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30"/>
+        <Slider x:Name="slider" HorizontalAlignment="Left" Margin="0,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-100" LargeChange="100" SmallChange="5" />
+        <Label x:Name="label" Content="Increase Contrast:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30" Margin="0,4,0,0"/>
+        <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="176,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" MouseRightButtonDown="OpenFolder" Minimum="-100" LargeChange="100" SmallChange="5" />
+        <Label x:Name="label_Copy" Content="Brightness:" HorizontalAlignment="Left" Margin="176,4,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30"/>
+        <CheckBox x:Name="Show" Content="Show" HorizontalAlignment="Left" Margin="362,32,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

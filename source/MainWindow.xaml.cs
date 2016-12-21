@@ -531,11 +531,11 @@
                         Image<Bgr, Byte> frameImg = Kimage2CVimg(colorFrame);
                         //choose contrast 
                         frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
-
+                        frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
                         //Rescale
                         frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
-                        salvataggioFile( frameImg.ToBitmap());
-
+                        if (Show.IsChecked == true) { SaveFile(frameImg.ToBitmap()); }
+                                           
                         //Flip image (?)
                         //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
                         //Image to gray scale
@@ -562,7 +562,7 @@
 
           // per salvare foto su cartella
      
-          private void salvataggioFile(System.Drawing.Bitmap frameImg)
+          private void SaveFile(System.Drawing.Bitmap frameImg)
           {
             System.Drawing.Bitmap wmp;
             wmp = frameImg;
@@ -802,7 +802,7 @@
         }
 
 
-        // Contrast changer method
+        // Adjust Contrast Method
         public static Emgu.CV.Image<Bgr, Byte> Contrast(System.Drawing.Bitmap sourceBitmap, int threshold)
           {
               BitmapData sourceData = sourceBitmap.LockBits(new System.Drawing.Rectangle(0, 0,
@@ -881,15 +881,42 @@
               return new Emgu.CV.Image<Bgr, Byte> (resultBitmap);
           }
 
+            // Adjust Brightess Method
+            public static Emgu.CV.Image<Bgr, Byte> AdjustBrightness(System.Drawing.Bitmap Image, int value)
+            {
+            System.Drawing.Bitmap TempBitmap = Image;
+            float FinalValue = (float)value / 255.0f;
+            System.Drawing.Bitmap NewBitmap = new System.Drawing.Bitmap(TempBitmap.Width, TempBitmap.Height);
+            System.Drawing.Graphics NewGraphics = System.Drawing.Graphics.FromImage(NewBitmap);
+            float[][] FloatColorMatrix =
+            {
+                new float [] {1,0,0,0,0},
+                new float [] {0,1,0,0,0},
+                new float [] {0,0,1,0,0},
+                new float [] {0,0,0,1,0},
+                new float [] {FinalValue, FinalValue, FinalValue, 1, 1}
+
+            };
+            ColorMatrix NewColorMatrix = new ColorMatrix(FloatColorMatrix);
+            ImageAttributes Attributes = new ImageAttributes();
+            Attributes.SetColorMatrix(NewColorMatrix);
+            NewGraphics.DrawImage(TempBitmap, new System.Drawing.Rectangle(0,0, TempBitmap.Width, 
+                TempBitmap.Height), 0, 0, TempBitmap.Width, TempBitmap.Height, System.Drawing.GraphicsUnit.Pixel, Attributes);
+
+            Attributes.Dispose();
+            NewGraphics.Dispose();
+
+            return new Emgu.CV.Image<Bgr, Byte> (NewBitmap);
+            }
+
    
-
-
-   
-
+        //WHen i press with the right mouse button i open this folder
         private void OpenFolder(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             System.Diagnostics.Process.Start(@"C:\Users\tavea\Documents\GitHub\Tesi\img");
         }
+
+        
 
         private void EventClosed(object sender, EventArgs e)
         {
