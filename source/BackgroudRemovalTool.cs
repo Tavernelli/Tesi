@@ -1,16 +1,26 @@
-﻿using Microsoft.Kinect;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using Microsoft.Kinect;
+using Microsoft.Samples.Kinect.BodyBasics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
-namespace Microsoft.Samples.Kinect.BodyBasics
+namespace KinectBackgroundRemoval
 {
-    public class BackgroundRemovalTool
+    /// <summary>
+    /// Provides extension methods for removing the background of a Kinect frame.
+    /// </summary>
+    public class BackgroundRemovalTool : MainWindow
     {
         #region Constants
 
@@ -22,7 +32,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <summary>
         /// Default format.
         /// </summary>
-        readonly PixelFormat FORMAT = PixelFormats.Bgra32;
+        readonly System.Windows.Media.PixelFormat FORMAT = PixelFormats.Bgra32;
 
         /// <summary>
         /// Bytes per pixel.
@@ -37,6 +47,19 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// The bitmap source.
         /// </summary>
         WriteableBitmap _bitmap = null;
+
+        //draw update timer
+        protected DispatcherTimer drawUpdateTimer;
+        /// <summary>
+        /// ColorFrame classification update time
+        /// </summary>
+        private const double TimeToClassificationColorFrame = 0.500;
+
+        /// <summary>
+        /// ColorFrame accumulatore time
+        /// </summary>
+        private double colorFrameAccTime = 0.0;
+
 
         /// <summary>
         /// The depth values.
@@ -68,6 +91,13 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// </summary>
         CoordinateMapper _coordinateMapper = null;
 
+        //Last object clissified
+        ClassifiedObject currentObjectClassified = new ClassifiedObject();
+
+        //CASCADE CLASSIFIER
+        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\OUTPUT\CASCADE@bicchiere\cascade.xml");
+
+
         #endregion
 
         #region Constructor
@@ -84,6 +114,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         #endregion
 
         #region Methods
+
 
         /// <summary>
         /// Converts a depth frame to the corresponding System.Windows.Media.Imaging.BitmapSource and removes the background (green-screen effect).
@@ -161,17 +192,104 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
 
+                //--------------------------------------------------------------------
+
+
+
+                //compute frame rate
+
+                colorFrameAccTime += colorFrame.ColorCameraSettings.FrameInterval.TotalSeconds;
+                //about 0.33 secs
+                if (TimeToClassificationColorFrame <= colorFrameAccTime)
+                {
+                    //Reset accumulator
+                    colorFrameAccTime = 0.0;
+                    int scaleFactor = 2;
+                    //K image to Emgu image                
+                    Image<Bgr, byte> frameImg = Kimage2CVimg(colorFrame);
+
+                    //Rescale
+                    frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
+
+                    //Image to gray scale
+                    Image<Gray, byte> grayframe = frameImg.Convert<Gray, byte>();
+
+                    ///////////////////////////////////////////////////////////////////
+                    System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
+
+                    //glasses objects
+                    currentObjectClassified.feature = "nodraw";
+                    foreach (var rectObj in gettedObjects)
+                    {
+                        //take center
+                        currentObjectClassified.rectangle = rectObj;
+                        currentObjectClassified.ScaleRectangle(scaleFactor);
+                        currentObjectClassified.z = 0.0; //todo
+                        currentObjectClassified.rotation = 0.0; //todo
+                        currentObjectClassified.feature = "draw";
+                    }
+
+                }
+
                 _bitmap.Lock();
 
+                var bmp = new System.Drawing.Bitmap(_bitmap.PixelWidth, _bitmap.PixelHeight,
+                                    _bitmap.BackBufferStride,
+                                    System.Drawing.Imaging.PixelFormat.Format32bppRgb,
+                                    _bitmap.BackBuffer);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+
                 Marshal.Copy(_displayPixels, 0, _bitmap.BackBuffer, _displayPixels.Length);
+
                 _bitmap.AddDirtyRect(new Int32Rect(0, 0, depthWidth, depthHeight));
+
+                if (currentObjectClassified.feature.Equals("draw"))
+                {
+
+                    Rectangle rect = new Rectangle(currentObjectClassified.rectangle.X / 4,
+                                             (int)(currentObjectClassified.rectangle.Y / 2.75),
+                                             currentObjectClassified.rectangle.Width / 2,
+                                             currentObjectClassified.rectangle.Height / 2);
+                    System.Drawing.Pen OrangePen = new System.Drawing.Pen(System.Drawing.Color.Orange, 3);
+                    g.DrawRectangle(OrangePen, rect);
+
+
+
+                }
 
                 _bitmap.Unlock();
             }
 
+
+
             return _bitmap;
         }
 
+
+        //CONVERTO DA COLORFRAME A EMGU
+        public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg(ColorFrame frame)
+        {
+
+            var width = frame.FrameDescription.Width;
+            var heigth = frame.FrameDescription.Height;
+            var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
+            frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
+
+
+            var bitmap = new System.Drawing.Bitmap(width, heigth, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+            Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
+            bitmap.UnlockBits(bitmapData);
+
+            return new Emgu.CV.Image<Bgr, Byte>(bitmap);
+        }
+
+
         #endregion
     }
+
+
+
+
 }
+

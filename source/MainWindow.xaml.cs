@@ -17,6 +17,7 @@
     using System.Globalization;
     using System.Net.Sockets;
     using System.Net;
+    
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -202,6 +203,7 @@
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
 
+
             // get the coordinate mapper
             this.coordinateMapper = this.kinectSensor.CoordinateMapper;
             
@@ -213,6 +215,7 @@
 
             // create the bitmap to display
             this.colorImageToDraw = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
+
             
 
             // get size of joint space
@@ -221,7 +224,7 @@
 
             // open the reader for the body frames
             this.bodyFrameReader = this.kinectSensor.BodyFrameSource.OpenReader();
-
+            
             // open the reader for the color frames
             this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
 
@@ -301,6 +304,8 @@
             this.InitializeComponent();
 
             
+            
+
 
         }
 
@@ -319,6 +324,7 @@
                 return this.imageSource;
             }
         }
+
 
         /// <summary>
         /// Gets or sets the current status text to display
@@ -397,6 +403,7 @@
                 {
                     // Draw background to set the render size
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
+                    
                 }
                 // Draw a transparent background to set the render size
                 if (currentObjectClassified.feature.Equals( "draw" ))

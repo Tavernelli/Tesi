@@ -212,7 +212,7 @@
 
                 if(boxToTakeImage != null)
                 {
-                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 4), boxToTakeImage.Box);
+                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), boxToTakeImage.Box);
                 }
             }
         }
@@ -343,7 +343,7 @@
                 // write the new file to disk
                 try
                 {
-                    // write imege
+                    // write image
                     staticOutImage.Save(path);
                     //update status text field
                     this.StatusText = string.Format(Properties.Resources.SavedScreenshotStatusTextFormat, path);
