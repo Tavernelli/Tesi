@@ -245,11 +245,13 @@ namespace KinectBackgroundRemoval
 
                 if (currentObjectClassified.feature.Equals("draw"))
                 {
-
-                    Rectangle rect = new Rectangle(currentObjectClassified.rectangle.X / 4,
-                                             (int)(currentObjectClassified.rectangle.Y / 2.75),
-                                             currentObjectClassified.rectangle.Width / 2,
-                                             currentObjectClassified.rectangle.Height / 2);
+                    int scalefactorX = 4;
+                    double scalefactorY = 2.75;
+                    int scalefactorRect = 2; 
+                    Rectangle rect = new Rectangle(currentObjectClassified.rectangle.X / scalefactorX,
+                                             (int)(currentObjectClassified.rectangle.Y / scalefactorY),
+                                             currentObjectClassified.rectangle.Width / scalefactorRect,
+                                             currentObjectClassified.rectangle.Height / scalefactorRect);
                     System.Drawing.Pen OrangePen = new System.Drawing.Pen(System.Drawing.Color.Orange, 3);
                     g.DrawRectangle(OrangePen, rect);
 
