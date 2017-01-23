@@ -1,4 +1,5 @@
-﻿using KinectBackgroundRemoval;
+﻿using Emgu.CV;
+using KinectBackgroundRemoval;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
@@ -24,12 +25,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     {
         KinectSensor _sensor;
         MultiSourceFrameReader _reader;
+        CascadeClassifier cClassifierObj;
 
         //Create a background removal tool.
         BackgroundRemovalTool _backgroundRemovalTool;
 
-        public Windowdepth()
+        public Windowdepth(CascadeClassifier cClassifierCurrent)
         {
+            this.cClassifierObj = cClassifierCurrent;
             InitializeComponent();
         }
 
@@ -79,7 +82,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 if (colorFrame != null && depthFrame != null && bodyIndexFrame != null)
                 {
                     //Update the image source.
-                    camera.Source = _backgroundRemovalTool.GreenScreen(colorFrame, depthFrame, bodyIndexFrame);
+                    camera.Source = _backgroundRemovalTool.GreenScreen(colorFrame, depthFrame, bodyIndexFrame, cClassifierObj);
                 }
             }
 

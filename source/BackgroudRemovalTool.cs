@@ -94,8 +94,6 @@ namespace KinectBackgroundRemoval
         //Last object clissified
         ClassifiedObject currentObjectClassified = new ClassifiedObject();
 
-        //CASCADE CLASSIFIER
-        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\OUTPUT\CASCADE@bicchiere\cascade.xml");
 
 
         #endregion
@@ -123,7 +121,7 @@ namespace KinectBackgroundRemoval
         /// <param name="colorFrame">The specified color frame.</param>
         /// <param name="bodyIndexFrame">The specified body index frame.</param>
         /// <returns>The corresponding System.Windows.Media.Imaging.BitmapSource representation of image.</returns>
-        public BitmapSource GreenScreen(ColorFrame colorFrame, DepthFrame depthFrame, BodyIndexFrame bodyIndexFrame)
+        public BitmapSource GreenScreen(ColorFrame colorFrame, DepthFrame depthFrame, BodyIndexFrame bodyIndexFrame, CascadeClassifier cClassifierObj)
         {
             int colorWidth = colorFrame.FrameDescription.Width;
             int colorHeight = colorFrame.FrameDescription.Height;
@@ -192,7 +190,7 @@ namespace KinectBackgroundRemoval
                     }
                 }
 
-                //--------------------------------------------------------------------
+                //------------------------------------- Object recognition -----------------------------------------
 
 
 
@@ -215,7 +213,7 @@ namespace KinectBackgroundRemoval
                     Image<Gray, byte> grayframe = frameImg.Convert<Gray, byte>();
 
                     ///////////////////////////////////////////////////////////////////
-                    System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
+                    System.Drawing.Rectangle[] gettedObjects = cClassifierObj.DetectMultiScale(grayframe, 1.05, 3);
 
                     //glasses objects
                     currentObjectClassified.feature = "nodraw";
@@ -255,13 +253,10 @@ namespace KinectBackgroundRemoval
                     System.Drawing.Pen OrangePen = new System.Drawing.Pen(System.Drawing.Color.Orange, 3);
                     g.DrawRectangle(OrangePen, rect);
 
-
-
                 }
 
                 _bitmap.Unlock();
             }
-
 
 
             return _bitmap;

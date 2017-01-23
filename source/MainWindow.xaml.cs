@@ -780,9 +780,11 @@
               this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                               : Properties.Resources.SensorNotAvailableStatusText;
           }
+
+
           private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
           
-
+        //send to android client
           private void button1_Click(object sender, RoutedEventArgs e)
           {
                  
@@ -792,7 +794,10 @@
                   if (currentObjectClassified.feature.Equals("draw"))
                   {
                       name = currentObjectClassified.name;
-                      _height = ((currentObjectClassified.rectangle.Height/100)*2.54).ToString();
+                //center of obj
+                int CenterX = currentObjectClassified.rectangle.X + (int)(currentObjectClassified.rectangle.Width/2);
+                int Centery = currentObjectClassified.rectangle.Y + (int)(currentObjectClassified.rectangle.Height / 2);
+                _height = ((currentObjectClassified.rectangle.Height/100)*2.54).ToString();
                       _Width = ((currentObjectClassified.rectangle.Width /100)*2.54).ToString();
                 
                   }
@@ -805,7 +810,7 @@
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
-            Windowdepth win2 = new Windowdepth();
+            Windowdepth win2 = new Windowdepth(cClassifierCurrent);
             win2.Show();
 
         }
