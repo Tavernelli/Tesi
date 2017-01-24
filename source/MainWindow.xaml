@@ -46,12 +46,12 @@
         <Button x:Name="button" Content="Open Model" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Right" Margin="0,4,2,0" VerticalAlignment="Top" Width="87" Click="UploadModel_Click" Height="18"/>
         <!--<Button x:Name="button1" Content="Send" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,4,0,0" VerticalAlignment="Top" Width="42" Click="button1_Click"/>-->
         <Button x:Name="button2" Content="CutDepth" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Right" Margin="0,24,0,0" VerticalAlignment="Top" Width="89" Click="button2_Click"/>
-        <Slider x:Name="slider" HorizontalAlignment="Left" Margin="0,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" Minimum="-20" LargeChange="100" SmallChange="5" />
+        <Slider x:Name="slider" Value="{Binding ElementName=label,Path=Value}" TickFrequency="5" HorizontalAlignment="Left" Margin="0,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100" Minimum="-20" LargeChange="100" SmallChange="5" />
         <Label x:Name="label" Content="Increase Contrast:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30" Margin="0,4,0,0"/>
-        <Slider x:Name="slider1" HorizontalAlignment="Left" Margin="176,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100"  Minimum="-100" LargeChange="100" SmallChange="1" />
+        <Slider x:Name="slider1" Value="{Binding ElementName=label1,Path=Value}" TickFrequency="5" HorizontalAlignment="Left" Margin="176,34,0,0" VerticalAlignment="Top" Width="166" Maximum="100"  Minimum="-100" LargeChange="100" SmallChange="1" />
         <Label x:Name="label_Copy" Content="Brightness:" HorizontalAlignment="Left" Margin="176,4,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF52318F" Height="30"/>
-        <Label x:Name="label1"  HorizontalAlignment="Left" Margin="71,9,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <Label x:Name="label2"  HorizontalAlignment="Left" Margin="251,9,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBox x:Name="label1" Text="{Binding ElementName= slider,Path= Value}" HorizontalAlignment="Left" Margin="71,9,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBox x:Name="label2" Text="{Binding ElementName=slider1,Path=Value}" HorizontalAlignment="Left" Margin="251,9,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Image x:Name="img" Height="100" Margin="0,0,0,58" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100" RenderTransformOrigin="0.8,0.67"/>
         <Label x:Name="CenterX" Content="CenterX" HorizontalAlignment="Right" Margin="0,0,2,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label x:Name="CenterY" Content="CenterY" HorizontalAlignment="Right" Margin="0,0,138,0" Grid.Row="1" VerticalAlignment="Top"/>

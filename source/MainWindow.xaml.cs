@@ -547,8 +547,13 @@
                         //choose contrast 
                         frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
                         frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
-                        label1.Content = (int)slider.Value;
-                        label2.Content = (int)slider1.Value;
+                     //   label1.Text = ((int)slider.Value).ToString();
+                      //  label2.Text = ((int)slider1.Value).ToString();
+
+
+
+
+
                         img.Source = BitmapToImageSource(frameImg.ToBitmap()); 
 
                         //Rescale
@@ -932,7 +937,8 @@
             return new Emgu.CV.Image<Bgr, Byte> (NewBitmap);
             }
 
-   
+
+
         //convert  to bitmapSource from bitmap
         BitmapImage BitmapToImageSource(System.Drawing.Bitmap bitmap)
         {
