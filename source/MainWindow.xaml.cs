@@ -303,10 +303,7 @@
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            
-            
-
-
+         
         }
 
         /// <summary>
@@ -413,8 +410,12 @@
                                          currentObjectClassified.rectangle.Width,
                                          currentObjectClassified.rectangle.Height);
                     dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
+                    //center of obj
+                    CenterX.Content = currentObjectClassified.rectangle.X + (int)(currentObjectClassified.rectangle.Width / 2);
+                    CenterY.Content = currentObjectClassified.rectangle.Y + (int)(currentObjectClassified.rectangle.Height / 2);
+
                     //name?
-                    if(currentObjectClassified.name.Length > 0)
+                    if (currentObjectClassified.name.Length > 0)
                     {
                         FormattedText formattedTest = new FormattedText
                         (
@@ -439,6 +440,13 @@
                     }
                     
                 }
+                else
+                {
+
+                    CenterX.Content = 0;
+                    CenterY.Content = 0;
+                }
+
                 if(this.bodies != null)
                 {
                     int penIndex = 0;
@@ -559,11 +567,11 @@
                         currentObjectClassified.feature = "nodraw";
                         foreach (var rectObj in gettedObjects)
                         {
-                            //take center
+                           
                             currentObjectClassified.rectangle = rectObj;
                             currentObjectClassified.ScaleRectangle(scaleFactor);
-                            currentObjectClassified.z = 0.0; //todo
-                            currentObjectClassified.rotation = 0.0; //todo
+                          //  currentObjectClassified.z = 0.0; //todo
+                           // currentObjectClassified.rotation = 0.0; //todo
                             currentObjectClassified.feature = "draw";
                         }
                     }
@@ -784,7 +792,8 @@
           }
 
 
-//-------------- buttun Send -> Cut Depth -> And adjsut brightes and contrast method.
+#if false
+        //-------------- buttun Send -> Cut Depth -> And adjsut brightes and contrast method.
         private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
           
         //send to android client
@@ -797,18 +806,15 @@
                   if (currentObjectClassified.feature.Equals("draw"))
                   {
                       name = currentObjectClassified.name;
-                //center of obj
-                int CenterX = currentObjectClassified.rectangle.X + (int)(currentObjectClassified.rectangle.Width/2);
-                int Centery = currentObjectClassified.rectangle.Y + (int)(currentObjectClassified.rectangle.Height / 2);
+                
                 _height = ((currentObjectClassified.rectangle.Height/100)*2.54).ToString();
                       _Width = ((currentObjectClassified.rectangle.Width /100)*2.54).ToString();
                 
                   }
 
                 Server TCPServer = new Server(name, tcpListener, _height, _Width);
-            
-
         }
+#endif
 
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
