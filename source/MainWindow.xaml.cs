@@ -541,9 +541,11 @@
                         frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
                         label1.Content = (int)slider.Value;
                         label2.Content = (int)slider1.Value;
+                        img.Source = BitmapToImageSource(frameImg.ToBitmap()); 
+
                         //Rescale
                         frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
-                        if (Show.IsChecked == true) { SaveFile(frameImg.ToBitmap()); }
+                       
                                            
                         //Flip image (?)
                         //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
@@ -570,7 +572,7 @@
         }
 
           // per salvare foto su cartella
-     
+#if false
           private void SaveFile(System.Drawing.Bitmap frameImg)
           {
             System.Drawing.Bitmap wmp;
@@ -579,10 +581,10 @@
             string path = @"C:\Users\tavea\Documents\GitHub\Tesi\img\image" + ".png";
               wmp.Save(path);
             
-            
-
-
+  
         }
+
+#endif
 
         //funzione che trasforma il frame nel formato di Emgu
         public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg (ColorFrame frame)
@@ -782,7 +784,8 @@
           }
 
 
-          private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
+//-------------- buttun Send -> Cut Depth -> And adjsut brightes and contrast method.
+        private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
           
         //send to android client
           private void button1_Click(object sender, RoutedEventArgs e)
@@ -924,13 +927,22 @@
             }
 
    
-        //WHen i press with the right mouse button i open this folder
-        private void OpenFolder(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //convert  to bitmapSource from bitmap
+        BitmapImage BitmapToImageSource(System.Drawing.Bitmap bitmap)
         {
-            System.Diagnostics.Process.Start(@"C:\Users\tavea\Documents\GitHub\Tesi\img");
-        }
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+                memory.Position = 0;
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
 
-        
+                return bitmapimage;
+            }
+        }
 
         private void EventClosed(object sender, EventArgs e)
         {
