@@ -1,5 +1,5 @@
 ﻿using Emgu.CV;
-using KinectBackgroundRemoval;
+//using KinectBackgroundRemoval;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;

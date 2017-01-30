@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace KinectBackgroundRemoval
+namespace Microsoft.Samples.Kinect.BodyBasics
 {
     /// <summary>
     /// Provides extension methods for removing the background of a Kinect frame.

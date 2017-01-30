@@ -13,6 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToolsGenHaarCascade", "Tool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsGenHaarCascade-WPF", "ToolsGenHaarCascade\ToolsGenHaarCascade-WPF.csproj", "{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FinalExE", "FinalExE", "{D250E9F1-358F-42FD-A99B-F05CA59AD44F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinestraIntro", "FinestraIntro\FinestraIntro.csproj", "{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{269A7B21-FBFE-4E7A-8BBE-C8DE2EC0D833} = {269A7B21-FBFE-4E7A-8BBE-C8DE2EC0D833}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +50,14 @@ Global
 		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|x64.ActiveCfg = Release|Any CPU
 		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0}.Release|x64.Build.0 = Release|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Debug|x64.Build.0 = Debug|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Release|x64.ActiveCfg = Release|Any CPU
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +65,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4467C0A4-9040-48BF-B9B7-911A4148D013} = {9A6A3D5C-7189-40D8-A55B-B9D99BF67C3C}
 		{83BF35C6-FD36-4CFF-B755-4A4F0BD1DDD0} = {EDAB68C1-D7B1-4A9F-A38D-39D9500DB63D}
+		{57E43CF4-A664-4650-B7D7-0FC8A0D7E77F} = {D250E9F1-358F-42FD-A99B-F05CA59AD44F}
 	EndGlobalSection
 EndGlobal

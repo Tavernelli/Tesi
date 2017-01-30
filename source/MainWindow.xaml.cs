@@ -791,10 +791,23 @@
           /// <param name="e">event arguments</param>
           private void Sensor_IsAvailableChanged(object sender, IsAvailableChangedEventArgs e)
           {
-              // on failure, set the status text
-              this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
-                                                              : Properties.Resources.SensorNotAvailableStatusText;
-          }
+#if false
+            // on failure, set the status text
+            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
+                                                            : Properties.Resources.SensorNotAvailableStatusText;
+        }
+#endif
+            if (StatusText != null)
+            {
+                // on failure, set the status text
+                this.StatusText = Properties.Resources.RunningStatusText;
+
+            }
+            else {
+                this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
+                                                          : Properties.Resources.SensorNotAvailableStatusText;
+            }
+        }
 
 
 #if false
