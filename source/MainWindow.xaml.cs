@@ -838,8 +838,8 @@
         private void button2_Click(object sender, EventArgs e)
         {
             Windowdepth win2 = new Windowdepth(cClassifierCurrent);
-            win2.Show();
-
+            win2.ShowDialog();
+            
         }
 
 

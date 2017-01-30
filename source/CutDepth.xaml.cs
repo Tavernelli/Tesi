@@ -1,5 +1,4 @@
 ﻿using Emgu.CV;
-//using KinectBackgroundRemoval;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
@@ -67,7 +66,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
 
             this.Close();
-            MainWindow mw = new MainWindow();
+            
             
         }
 
@@ -86,6 +85,27 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Execute shutdown tasks
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this._reader != null)
+            {
+               
+                this._reader.Dispose();
+                this._reader = null;
+            }
+
+            if (this._sensor != null)
+            {
+                this._sensor.Close();
+                this._sensor = null;
+            }
         }
 
     }
