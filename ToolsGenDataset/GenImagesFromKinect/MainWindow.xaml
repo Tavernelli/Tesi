@@ -53,6 +53,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <ImageBrush x:Key="AddButtonImageBrush" ImageSource="/ButtonIcon/next.png" Stretch="UniformToFill"/>
     </Window.Resources>
     <Grid x:Name="MainGrid" Margin="10 0 10 0" >
         <Grid.RowDefinitions>
@@ -76,5 +77,7 @@
         </StatusBar>
         <Button x:Name="SelectImagePath" Content="Select images path" Style="{StaticResource SelectImagesPathButton}" Margin="10,16,0,0" Grid.Row="2" VerticalAlignment="Top" Click="SelectImagePath_Click" HorizontalAlignment="Left"/>
         <Button x:Name="OpenDialogSamples" Content="Create dataset vector" Style="{StaticResource SelectImagesPathButton}" Margin="10,16,0,0" Grid.Row="2" VerticalAlignment="Top" Click="DialogCreateSamples_Click" HorizontalAlignment="Center"/>
+
+       <!-- <Button x:Name="daUnoaDue" Content=""  Background="{StaticResource AddButtonImageBrush}" BorderBrush="Transparent" HorizontalAlignment="Left" Margin="781,14,0,0" VerticalAlignment="Top" Width="48" Height="23" RenderTransformOrigin="1.115,0.5" Click="daUnoaDue_Click"/>-->
     </Grid>
 </Window>

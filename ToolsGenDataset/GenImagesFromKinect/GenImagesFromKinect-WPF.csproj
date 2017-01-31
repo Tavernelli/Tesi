@@ -130,6 +130,10 @@
     <Resource Include="Images\Status.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="ButtonIcon\back.png" />
+    <Resource Include="ButtonIcon\basecircle.png" />
+    <Resource Include="ButtonIcon\close.png" />
+    <Resource Include="ButtonIcon\next.png" />
     <Content Include="OpenCV_tools\opencv_annotation.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

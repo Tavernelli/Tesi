@@ -445,6 +445,15 @@ private void DialogCreateSamples_Click(object sender, RoutedEventArgs e)
             DialogCreateSamples dialog = new DialogCreateSamples(savePathImages);
             dialog.ShowDialog();
         }
-        
+
+#if false
+        private void daUnoaDue_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+            ToolsGenHaarCascade.MainWindow apri = new ToolsGenHaarCascade.MainWindow();
+            apri.ShowDialog();
+        }
+
+#endif
     }
 }

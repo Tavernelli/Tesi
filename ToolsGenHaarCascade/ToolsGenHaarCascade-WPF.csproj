@@ -16,7 +16,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -98,6 +98,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="ButtonIcon\back.png" />
+    <Resource Include="ButtonIcon\basecircle.png" />
+    <Resource Include="ButtonIcon\close.png" />
+    <Resource Include="ButtonIcon\next.png" />
     <Content Include="Tools\opencv_annotation.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
