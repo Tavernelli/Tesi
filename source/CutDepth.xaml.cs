@@ -54,20 +54,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private void Window_Closed(object sender, EventArgs e)
         {
             
-            if (_reader != null)
+            if (this._reader != null)
             {
-                _reader.Dispose();
+                this._reader.Dispose();
                 
             }
 
-            if (_sensor != null)
+            if (this._sensor != null)
             {
-                _sensor.Close();
+                this._sensor.Close();
             }
 
             this.Close();
-            
-            
+           
+            MainWindow mw = new MainWindow();
+
         }
 
         void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
@@ -87,6 +88,9 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         }
 
+     
+        
+        
         /// <summary>
         /// Execute shutdown tasks
         /// </summary>

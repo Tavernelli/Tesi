@@ -24,6 +24,8 @@
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        
+
         /// <summary>
         /// Radius of drawn hand circles
         /// </summary>
@@ -153,11 +155,16 @@
         //Last object clissified
         ClassifiedObject currentObjectClassified = new ClassifiedObject();
 
+        ClassifiedObject[] currentObjectClassified1 = new ClassifiedObject[2] { new ClassifiedObject(), new ClassifiedObject() };
+
         //CASCADE CLASSIFIER
-        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml"); 
-      
+        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml");
+
+        CascadeClassifier[] cClassifierCurrent1 = new CascadeClassifier[2];
+
         //Upload model Button
-        private void UploadModel_Click(object sender, EventArgs e)
+#if false       
+            private void UploadModel_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -180,6 +187,92 @@
                     {
                         currentObjectClassified.name = "";
                     }
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Not found cascade.xml in:\n" + pathDir, "Error to load model", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+#endif
+        //Upload model Button
+        private void UploadModel_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string pathDir = dialog.SelectedPath;
+                string pathFile = pathDir + "\\cascade.xml";
+
+                if (File.Exists(pathFile))
+                {
+                    //open model
+                    sSelectedFile = pathFile;
+                    if (cClassifierCurrent1[0] == null && cClassifierCurrent1[1] == null)
+                    {
+
+                        cClassifierCurrent1[0] = new CascadeClassifier(sSelectedFile);
+                        //get name of object
+                        string[] pathsplit = pathDir.Split('@');
+                        //if splitted:
+                        if (pathsplit.Length > 1)
+                        {
+                            currentObjectClassified1[0].name = pathsplit[1];
+                            Nome1.Content = pathsplit[1];
+                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                        }
+                        else
+                        {
+                            currentObjectClassified1[0].name = "";
+                            Nome2.Content = "";
+                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                        }
+                    }
+                    else if (cClassifierCurrent1[0] != null && cClassifierCurrent1[1] == null)
+                    {
+                        cClassifierCurrent1[1] = new CascadeClassifier(sSelectedFile);
+                        //get name of object
+                        string[] pathsplit = pathDir.Split('@');
+                        //if splitted:
+                        if (pathsplit.Length > 1)
+                        {
+                            currentObjectClassified1[1].name = pathsplit[1];
+                            Nome2.Content = pathsplit[1];
+                            X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                        }
+                        else
+                        {
+                            currentObjectClassified1[1].name = "";
+                            Nome2.Content = "";
+                            X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                        }
+                    }
+                    else
+                    {
+                        cClassifierCurrent1[0] = new CascadeClassifier(sSelectedFile);
+                        cClassifierCurrent1[1] = null;
+                        Nome2.Content = "";
+                        X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+
+                        //get name of object
+                        string[] pathsplit = pathDir.Split('@');
+                        //if splitted:
+                        if (pathsplit.Length > 1)
+                        {
+                            currentObjectClassified1[0].name = pathsplit[1];
+                            Nome1.Content = pathsplit[1];
+                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                        }
+                        else
+                        {
+                            currentObjectClassified1[0].name = "";
+                            Nome1.Content = "";
+                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                        }
+
+                    }
+
                 }
                 else
                 {
@@ -355,6 +448,7 @@
         /// <param name="e">event arguments</param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+        
             if (this.bodyFrameReader != null)
             {
                 this.bodyFrameReader.FrameArrived += this.Body_FrameArrived;
@@ -402,7 +496,66 @@
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
                     
                 }
-                // Draw a transparent background to set the render size
+
+                for (int i = 0; i < currentObjectClassified1.Length; ++i)
+                {
+                    // Draw a transparent background to set the render size
+                    if (currentObjectClassified1[i].feature.Equals("draw"))
+                    {
+                        Rect rect = new Rect(currentObjectClassified1[i].rectangle.X,
+                                             currentObjectClassified1[i].rectangle.Y,
+                                             currentObjectClassified1[i].rectangle.Width,
+                                             currentObjectClassified1[i].rectangle.Height);
+                        dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
+                        //center of obj1
+
+
+                        CenterX.Content = currentObjectClassified1[0].rectangle.X + (int)(currentObjectClassified1[0].rectangle.Width / 2);
+                        CenterY.Content = currentObjectClassified1[0].rectangle.Y + (int)(currentObjectClassified1[0].rectangle.Height / 2);
+                        //Nome1.Content = currentObjectClassified1[1].name;
+                        //X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\basecircle.png"));
+                        //center of obj2
+
+
+                        CenterX2.Content = currentObjectClassified1[1].rectangle.X + (int)(currentObjectClassified1[1].rectangle.Width / 2);
+                        CenterY2.Content = currentObjectClassified1[1].rectangle.Y + (int)(currentObjectClassified1[1].rectangle.Height / 2);
+                        //Nome2.Content = currentObjectClassified1[2].name;
+                        //X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\basecircle.png"));
+
+
+
+                        //name?
+                        if (currentObjectClassified1[i].name.Length > 0)
+                        {
+                            FormattedText formattedTest = new FormattedText
+                            (
+                                currentObjectClassified1[i].name,
+                                CultureInfo.GetCultureInfo("en-us"),
+                                System.Windows.FlowDirection.LeftToRight,
+                                new Typeface("Arial Bold"),
+                                40,
+                                Brushes.White
+                            );
+
+                            //draw background of name Object.
+                            dc.DrawRoundedRectangle(Brushes.Orange, null,
+                            new Rect(currentObjectClassified1[i].rectangle.X - 4,
+                            currentObjectClassified1[i].rectangle.Y - 60, 250, 60), 10.0, 10.0);
+
+                            //draw name of Object.
+                            dc.DrawText(formattedTest,
+                                        new Point(currentObjectClassified1[i].rectangle.X,
+                                                  currentObjectClassified1[i].rectangle.Y - 60));
+
+                        }
+
+                    }
+         
+               
+                }
+
+//versione vecchia (senza multiselect!)
+#if false
                 if (currentObjectClassified.feature.Equals( "draw" ))
                 {
                     Rect rect = new Rect(currentObjectClassified.rectangle.X,
@@ -446,8 +599,8 @@
                     CenterX.Content = 0;
                     CenterY.Content = 0;
                 }
-
-                if(this.bodies != null)
+#endif
+                if (this.bodies != null)
                 {
                     int penIndex = 0;
                     foreach (Body body in this.bodies)
@@ -547,13 +700,9 @@
                         //choose contrast 
                         frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
                         frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
-                     //   label1.Text = ((int)slider.Value).ToString();
-                      //  label2.Text = ((int)slider1.Value).ToString();
-
-
-
-
-
+                        //   label1.Text = ((int)slider.Value).ToString();
+                        //  label2.Text = ((int)slider1.Value).ToString();
+                        //SaveFile(frameImg.ToBitmap());
                         img.Source = BitmapToImageSource(frameImg.ToBitmap()); 
 
                         //Rescale
@@ -564,7 +713,41 @@
                         //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
                         //Image to gray scale
                         Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
-                        
+
+                        ///////////////////////////////////////////////////////////////////
+                        if (cClassifierCurrent1[0] != null)
+                        {
+                            System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent1[0].DetectMultiScale(grayframe, 1.05, 3);
+
+
+                            currentObjectClassified1[0].feature = "nodraw";
+                            foreach (var rectObj in gettedObjects)
+                            {
+
+                                currentObjectClassified1[0].rectangle = rectObj;
+                                currentObjectClassified1[0].ScaleRectangle(scaleFactor);
+                                //  currentObjectClassified.z = 0.0; //todo
+                                // currentObjectClassified.rotation = 0.0; //todo
+                                currentObjectClassified1[0].feature = "draw";
+                            }
+                        }
+                        if (cClassifierCurrent1[1] != null)
+                        {
+                            System.Drawing.Rectangle[] gettedObjects1 = cClassifierCurrent1[1].DetectMultiScale(grayframe, 1.05, 3);
+                            currentObjectClassified1[1].feature = "nodraw";
+                            foreach (var rectObj in gettedObjects1)
+                            {
+
+                                currentObjectClassified1[1].rectangle = rectObj;
+                                currentObjectClassified1[1].ScaleRectangle(scaleFactor);
+                                //  currentObjectClassified.z = 0.0; //todo
+                                // currentObjectClassified.rotation = 0.0; //todo
+                                currentObjectClassified1[1].feature = "draw";
+                            }
+                        }
+
+//versione vecchia senzamultiselect!                       
+#if false
                         ///////////////////////////////////////////////////////////////////
                         System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
                         ///////////////////////////////////////////////////////////////////
@@ -579,12 +762,14 @@
                            // currentObjectClassified.rotation = 0.0; //todo
                             currentObjectClassified.feature = "draw";
                         }
+#endif
+              
                     }
                 }
             }
         }
 
-          // per salvare foto su cartella
+// per salvare foto su cartella
 #if false
           private void SaveFile(System.Drawing.Bitmap frameImg)
           {
@@ -837,8 +1022,8 @@
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
-            Windowdepth win2 = new Windowdepth(cClassifierCurrent);
-            win2.ShowDialog();
+            Windowdepth win2 = new Windowdepth(cClassifierCurrent1[0]);
+            win2.Show();
             
         }
 

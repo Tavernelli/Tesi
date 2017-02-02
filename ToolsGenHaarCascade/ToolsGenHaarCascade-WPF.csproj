@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Kinect.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -102,6 +105,7 @@
     <Resource Include="ButtonIcon\basecircle.png" />
     <Resource Include="ButtonIcon\close.png" />
     <Resource Include="ButtonIcon\next.png" />
+    <Resource Include="Kinect.ico" />
     <Content Include="Tools\opencv_annotation.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

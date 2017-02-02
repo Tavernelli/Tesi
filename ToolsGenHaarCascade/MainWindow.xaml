@@ -33,14 +33,14 @@
     <Grid Margin="0,0,2,0">
         <Canvas HorizontalAlignment="Center" Height="300" Margin="10" VerticalAlignment="Center" Width="340">
             <Button x:Name="SelectFile" Style="{StaticResource CreateDataButton}"  Content="Select File" Canvas.Left="140" Canvas.Top="270" Width="65" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="TakeFile_Click" RenderTransformOrigin="1.309,3.2"/>
-            <Label x:Name="label" Content="Inserisci numero positivi: " Canvas.Left="36" Canvas.Top="34" Width="143"/>
+            <Label x:Name="label" Content="Positives: " Canvas.Left="31" Canvas.Top="34" Width="73" FontSize="14"/>
             <TextBox x:Name="NumPos" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="37" Width="120"/>
             <TextBox x:Name="NumNeg" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="77" Width="120"/>
-            <Label x:Name="label_Copy" Content="Inserisci numero negativi: " Canvas.Left="36" Canvas.Top="74" Width="143"/>
+            <Label x:Name="label_Copy" Content="Negatives: " Canvas.Left="32" Canvas.Top="74" Width="80" FontSize="14"/>
             <TextBox x:Name="NumStage" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="117" Width="120"/>
-            <Label x:Name="label_Copy1" Content="Inserisci numero Stage: " Canvas.Left="36" Canvas.Top="114" Width="143"/>
-            <Label x:Name="label1" Content="Width" Canvas.Left="36" Canvas.Top="159"/>
-            <Label x:Name="label2" Content="Height" Canvas.Left="36" Canvas.Top="197"/>
+            <Label x:Name="label_Copy1" Content="Stage: " Canvas.Left="34" Canvas.Top="114" Width="65" FontSize="14"/>
+            <Label x:Name="label1" Content="Width" Canvas.Left="34" Canvas.Top="154" FontSize="14"/>
+            <Label x:Name="label2" Content="Height" Canvas.Left="36" Canvas.Top="191" FontSize="14"/>
             <TextBox x:Name="textBoxWidth" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="154" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput"  DataObject.Pasting="textBoxInteger_Pasting"/>
             <TextBox x:Name="textBoxHeight" Height="23" Canvas.Left="190" TextWrapping="Wrap" Text="" Canvas.Top="192" Width="120"  PreviewTextInput="textBoxInteger_PreviewTextInput" DataObject.Pasting="textBoxInteger_Pasting"/>
             <CheckBox x:Name="Delete" Content="Clean output" Canvas.Left="190" Canvas.Top="235"/>

@@ -212,23 +212,26 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     //Image to gray scale
                     Image<Gray, byte> grayframe = frameImg.Convert<Gray, byte>();
 
-                    ///////////////////////////////////////////////////////////////////
-                    System.Drawing.Rectangle[] gettedObjects = cClassifierObj.DetectMultiScale(grayframe, 1.05, 3);
 
-                    //glasses objects
-                    currentObjectClassified.feature = "nodraw";
-                    foreach (var rectObj in gettedObjects)
+                    if (cClassifierObj != null)
                     {
-                        //take center
-                        currentObjectClassified.rectangle = rectObj;
-                        currentObjectClassified.ScaleRectangle(scaleFactor);
-                        currentObjectClassified.z = 0.0; //todo
-                        currentObjectClassified.rotation = 0.0; //todo
-                        currentObjectClassified.feature = "draw";
+                        ///////////////////////////////////////////////////////////////////
+                        System.Drawing.Rectangle[] gettedObjects = cClassifierObj.DetectMultiScale(grayframe, 1.05, 3);
+
+                        //glasses objects
+                        currentObjectClassified.feature = "nodraw";
+                        foreach (var rectObj in gettedObjects)
+                        {
+                            //take center
+                            currentObjectClassified.rectangle = rectObj;
+                            currentObjectClassified.ScaleRectangle(scaleFactor);
+                            currentObjectClassified.z = 0.0; //todo
+                            currentObjectClassified.rotation = 0.0; //todo
+                            currentObjectClassified.feature = "draw";
+                        }
+
                     }
-
                 }
-
                 _bitmap.Lock();
 
                 var bmp = new System.Drawing.Bitmap(_bitmap.PixelWidth, _bitmap.PixelHeight,
