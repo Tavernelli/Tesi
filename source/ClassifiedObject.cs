@@ -1,4 +1,7 @@
 ﻿using System.Drawing;
+using System.Threading;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace Microsoft.Samples.Kinect.BodyBasics
 {
@@ -10,8 +13,21 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double mRot = 0;
         private string mFeature = "";
         private string mName = "";
+        private CascadeClassifier mClassifier;
 
         public ClassifiedObject(){ }
+
+        public CascadeClassifier classifier
+        {
+            set
+            {
+                mClassifier = value;
+            }
+            get
+            {
+                return mClassifier;
+            }
+        }
 
         //Object Rectangle
         public Rectangle rectangle

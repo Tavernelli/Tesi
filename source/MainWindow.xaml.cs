@@ -17,7 +17,10 @@
     using System.Globalization;
     using System.Net.Sockets;
     using System.Net;
-    
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.Samples.Kinect.BodyBasics.source;
+
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -153,14 +156,14 @@
 
 
         //Last object clissified
-        ClassifiedObject currentObjectClassified = new ClassifiedObject();
+        ClassifiedObject[] currentObjectClassified = new ClassifiedObject[2]
+        {
+            new ClassifiedObject(),
+            new ClassifiedObject()
+        };
 
-        ClassifiedObject[] currentObjectClassified1 = new ClassifiedObject[2] { new ClassifiedObject(), new ClassifiedObject() };
-
-        //CASCADE CLASSIFIER
-        CascadeClassifier cClassifierCurrent = new CascadeClassifier(@"C:\Users\tavea\Documents\GitHub\Tesi\DATA\cascade.xml");
-
-        CascadeClassifier[] cClassifierCurrent1 = new CascadeClassifier[2];
+        //cnn thread
+        CNNThread cnnThread;
 
         //Upload model Button
 #if false       
@@ -209,68 +212,57 @@
                 {
                     //open model
                     sSelectedFile = pathFile;
-                    if (cClassifierCurrent1[0] == null && cClassifierCurrent1[1] == null)
-                    {
+                    bool doreset = true;
 
-                        cClassifierCurrent1[0] = new CascadeClassifier(sSelectedFile);
-                        //get name of object
-                        string[] pathsplit = pathDir.Split('@');
-                        //if splitted:
-                        if (pathsplit.Length > 1)
+                    for (int i = 0; i != currentObjectClassified.Length; ++i)
+                    {
+                        if (currentObjectClassified[i].classifier == null) { doreset = false; break; }
+                    }
+
+                    if(doreset)
+                    {
+                        for (int i = 0; i != currentObjectClassified.Length; ++i)
                         {
-                            currentObjectClassified1[0].name = pathsplit[1];
-                            Nome1.Content = pathsplit[1];
-                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
-                        }
-                        else
-                        {
-                            currentObjectClassified1[0].name = "";
-                            Nome2.Content = "";
-                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                            currentObjectClassified[i].classifier = null;
+                            currentObjectClassified[i].name = "";
                         }
                     }
-                    else if (cClassifierCurrent1[0] != null && cClassifierCurrent1[1] == null)
+
+                    for(int i = 0; i != currentObjectClassified.Length; ++i)
                     {
-                        cClassifierCurrent1[1] = new CascadeClassifier(sSelectedFile);
-                        //get name of object
-                        string[] pathsplit = pathDir.Split('@');
-                        //if splitted:
-                        if (pathsplit.Length > 1)
+                        if (currentObjectClassified[i].classifier == null)
                         {
-                            currentObjectClassified1[1].name = pathsplit[1];
-                            Nome2.Content = pathsplit[1];
-                            X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                            currentObjectClassified[i].classifier = new CascadeClassifier(sSelectedFile);
+                            //get name
+                            string[] pathsplit = pathDir.Split('@');
+                            //if splitted:
+                            currentObjectClassified[i].name = pathsplit.Length > 1 ? pathsplit[1] : "";
+                            //done
+                            break;
                         }
-                        else
-                        {
-                            currentObjectClassified1[1].name = "";
-                            Nome2.Content = "";
-                            X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
-                        }
+                    }
+
+                    //ui
+                    if (!currentObjectClassified[0].name.Equals(""))
+                    {
+                        Nome1.Content = currentObjectClassified[0].name;
+                        X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
                     }
                     else
                     {
-                        cClassifierCurrent1[0] = new CascadeClassifier(sSelectedFile);
-                        cClassifierCurrent1[1] = null;
+                        Nome1.Content = "";
+                        X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                    }
+                    //ui
+                    if (!currentObjectClassified[1].name.Equals(""))
+                    {
+                        Nome2.Content = currentObjectClassified[1].name;
+                        X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                    }
+                    else
+                    {
                         Nome2.Content = "";
                         X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
-
-                        //get name of object
-                        string[] pathsplit = pathDir.Split('@');
-                        //if splitted:
-                        if (pathsplit.Length > 1)
-                        {
-                            currentObjectClassified1[0].name = pathsplit[1];
-                            Nome1.Content = pathsplit[1];
-                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
-                        }
-                        else
-                        {
-                            currentObjectClassified1[0].name = "";
-                            Nome1.Content = "";
-                            X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
-                        }
-
                     }
 
                 }
@@ -293,6 +285,12 @@
         /// </summary>
         public MainWindow()
         {
+            //Cnn tread
+            cnnThread = new CNNThread(currentObjectClassified);
+
+            //start
+            cnnThread.Start();
+
             // one sensor is currently supported
             this.kinectSensor = KinectSensor.GetDefault();
 
@@ -489,117 +487,68 @@
             //draw object
             using (DrawingContext dc = this.drawingGroup.Open())
             {
-               
+
                 if ( this.colorImageToDraw != null)
                 {
                     // Draw background to set the render size
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
                     
                 }
+                
+                if (currentObjectClassified[0].feature.Equals("draw"))
+                {
+                    CenterX.Content = currentObjectClassified[0].rectangle.X + (int)(currentObjectClassified[0].rectangle.Width / 2);
+                    CenterY.Content = currentObjectClassified[0].rectangle.Y + (int)(currentObjectClassified[0].rectangle.Height / 2);
+                }
 
-                for (int i = 0; i < currentObjectClassified1.Length; ++i)
+                if (currentObjectClassified[1].feature.Equals("draw"))
+                {
+                    CenterX2.Content = currentObjectClassified[1].rectangle.X + (int)(currentObjectClassified[1].rectangle.Width / 2);
+                    CenterY2.Content = currentObjectClassified[1].rectangle.Y + (int)(currentObjectClassified[1].rectangle.Height / 2);
+                }
+
+                for (int i = 0; i < currentObjectClassified.Length; ++i)
                 {
                     // Draw a transparent background to set the render size
-                    if (currentObjectClassified1[i].feature.Equals("draw"))
+                    lock(cnnThread.mutex)
                     {
-                        Rect rect = new Rect(currentObjectClassified1[i].rectangle.X,
-                                             currentObjectClassified1[i].rectangle.Y,
-                                             currentObjectClassified1[i].rectangle.Width,
-                                             currentObjectClassified1[i].rectangle.Height);
-                        dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
-                        //center of obj1
-
-
-                        CenterX.Content = currentObjectClassified1[0].rectangle.X + (int)(currentObjectClassified1[0].rectangle.Width / 2);
-                        CenterY.Content = currentObjectClassified1[0].rectangle.Y + (int)(currentObjectClassified1[0].rectangle.Height / 2);
-                        //Nome1.Content = currentObjectClassified1[1].name;
-                        //X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\basecircle.png"));
-                        //center of obj2
-
-
-                        CenterX2.Content = currentObjectClassified1[1].rectangle.X + (int)(currentObjectClassified1[1].rectangle.Width / 2);
-                        CenterY2.Content = currentObjectClassified1[1].rectangle.Y + (int)(currentObjectClassified1[1].rectangle.Height / 2);
-                        //Nome2.Content = currentObjectClassified1[2].name;
-                        //X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\basecircle.png"));
-
-
-
-                        //name?
-                        if (currentObjectClassified1[i].name.Length > 0)
+                        if (currentObjectClassified[i].feature.Equals("draw"))
                         {
-                            FormattedText formattedTest = new FormattedText
-                            (
-                                currentObjectClassified1[i].name,
-                                CultureInfo.GetCultureInfo("en-us"),
-                                System.Windows.FlowDirection.LeftToRight,
-                                new Typeface("Arial Bold"),
-                                40,
-                                Brushes.White
-                            );
+                            Rect rect = new Rect(currentObjectClassified[i].rectangle.X,
+                                                 currentObjectClassified[i].rectangle.Y,
+                                                 currentObjectClassified[i].rectangle.Width,
+                                                 currentObjectClassified[i].rectangle.Height);
+                            dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
+                            //name?
+                            if (currentObjectClassified[i].name.Length > 0)
+                            {
+                                FormattedText formattedTest = new FormattedText
+                                (
+                                    currentObjectClassified[i].name,
+                                    CultureInfo.GetCultureInfo("en-us"),
+                                    System.Windows.FlowDirection.LeftToRight,
+                                    new Typeface("Arial Bold"),
+                                    40,
+                                    Brushes.White
+                                );
 
-                            //draw background of name Object.
-                            dc.DrawRoundedRectangle(Brushes.Orange, null,
-                            new Rect(currentObjectClassified1[i].rectangle.X - 4,
-                            currentObjectClassified1[i].rectangle.Y - 60, 250, 60), 10.0, 10.0);
+                                //draw background of name Object.
+                                dc.DrawRoundedRectangle(Brushes.Orange, null,
+                                new Rect(currentObjectClassified[i].rectangle.X - 4,
+                                currentObjectClassified[i].rectangle.Y - 60, 250, 60), 10.0, 10.0);
 
-                            //draw name of Object.
-                            dc.DrawText(formattedTest,
-                                        new Point(currentObjectClassified1[i].rectangle.X,
-                                                  currentObjectClassified1[i].rectangle.Y - 60));
+                                //draw name of Object.
+                                dc.DrawText(formattedTest,
+                                            new Point(currentObjectClassified[i].rectangle.X,
+                                                      currentObjectClassified[i].rectangle.Y - 60));
 
+                            }
                         }
-
                     }
          
                
                 }
 
-//versione vecchia (senza multiselect!)
-#if false
-                if (currentObjectClassified.feature.Equals( "draw" ))
-                {
-                    Rect rect = new Rect(currentObjectClassified.rectangle.X,
-                                         currentObjectClassified.rectangle.Y,
-                                         currentObjectClassified.rectangle.Width,
-                                         currentObjectClassified.rectangle.Height);
-                    dc.DrawRectangle(null, new Pen(Brushes.Orange, 8), rect);
-                    //center of obj
-                    CenterX.Content = currentObjectClassified.rectangle.X + (int)(currentObjectClassified.rectangle.Width / 2);
-                    CenterY.Content = currentObjectClassified.rectangle.Y + (int)(currentObjectClassified.rectangle.Height / 2);
-
-                    //name?
-                    if (currentObjectClassified.name.Length > 0)
-                    {
-                        FormattedText formattedTest = new FormattedText
-                        (
-                            currentObjectClassified.name,
-                            CultureInfo.GetCultureInfo("en-us"),
-                            System.Windows.FlowDirection.LeftToRight,
-                            new Typeface("Arial Bold"),
-                            40,
-                            Brushes.White
-                        );
-                        
-                        //draw background of name Object.
-                        dc.DrawRoundedRectangle(Brushes.Orange, null, 
-                        new Rect(currentObjectClassified.rectangle.X - 4, 
-                        currentObjectClassified.rectangle.Y-60, 250, 60), 10.0, 10.0);
-
-                        //draw name of Object.
-                        dc.DrawText(formattedTest,
-                                    new Point(currentObjectClassified.rectangle.X,
-                                              currentObjectClassified.rectangle.Y - 60));
-                        
-                    }
-                    
-                }
-                else
-                {
-
-                    CenterX.Content = 0;
-                    CenterY.Content = 0;
-                }
-#endif
                 if (this.bodies != null)
                 {
                     int penIndex = 0;
@@ -642,8 +591,7 @@
                 }
             }
         }
-
-      
+        
 
         /// <summary>
         /// Handles the color frame data arriving from the sensor
@@ -687,89 +635,31 @@
                     }
                     //compute frame rate
                     colorFrameAccTime += colorFrame.ColorCameraSettings.FrameInterval.TotalSeconds;
+
+                    //preview
+                    lock (cnnThread.mutex)  {
+                        if (cnnThread.imagePreview != null)
+                            img.Source = cnnThread.imagePreview;
+                    }
                     //about 0.33 secs
                     if (TimeToClassificationColorFrame <= colorFrameAccTime)
                     {
-                        //Reset accumulator
                         colorFrameAccTime = 0.0;
-                        ///////////////////////////////////////////////////////////////////
-                        //Preprocessing
-                        int scaleFactor = 2;
                         //K image to Emgu image
-                        Image<Bgr, Byte> frameImg = Kimage2CVimg(colorFrame);
-                        //choose contrast 
-                        frameImg = Contrast(frameImg.ToBitmap(), (int)slider.Value);
-                        frameImg = AdjustBrightness(frameImg.ToBitmap(), (int)slider1.Value);
-                        //   label1.Text = ((int)slider.Value).ToString();
-                        //  label2.Text = ((int)slider1.Value).ToString();
-                        //SaveFile(frameImg.ToBitmap());
-                        img.Source = BitmapToImageSource(frameImg.ToBitmap()); 
-
-                        //Rescale
-                        frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
-                       
-                                           
-                        //Flip image (?)
-                        //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
-                        //Image to gray scale
-                        Image<Gray, Byte> grayframe = frameImg.Convert<Gray, byte>();
-
-                        ///////////////////////////////////////////////////////////////////
-                        if (cClassifierCurrent1[0] != null)
-                        {
-                            System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent1[0].DetectMultiScale(grayframe, 1.05, 3);
-
-
-                            currentObjectClassified1[0].feature = "nodraw";
-                            foreach (var rectObj in gettedObjects)
-                            {
-
-                                currentObjectClassified1[0].rectangle = rectObj;
-                                currentObjectClassified1[0].ScaleRectangle(scaleFactor);
-                                //  currentObjectClassified.z = 0.0; //todo
-                                // currentObjectClassified.rotation = 0.0; //todo
-                                currentObjectClassified1[0].feature = "draw";
-                            }
-                        }
-                        if (cClassifierCurrent1[1] != null)
-                        {
-                            System.Drawing.Rectangle[] gettedObjects1 = cClassifierCurrent1[1].DetectMultiScale(grayframe, 1.05, 3);
-                            currentObjectClassified1[1].feature = "nodraw";
-                            foreach (var rectObj in gettedObjects1)
-                            {
-
-                                currentObjectClassified1[1].rectangle = rectObj;
-                                currentObjectClassified1[1].ScaleRectangle(scaleFactor);
-                                //  currentObjectClassified.z = 0.0; //todo
-                                // currentObjectClassified.rotation = 0.0; //todo
-                                currentObjectClassified1[1].feature = "draw";
-                            }
-                        }
-
-//versione vecchia senzamultiselect!                       
-#if false
-                        ///////////////////////////////////////////////////////////////////
-                        System.Drawing.Rectangle[] gettedObjects = cClassifierCurrent.DetectMultiScale(grayframe, 1.05, 3);
-                        ///////////////////////////////////////////////////////////////////
-                        //glasses objects
-                        currentObjectClassified.feature = "nodraw";
-                        foreach (var rectObj in gettedObjects)
-                        {
-                           
-                            currentObjectClassified.rectangle = rectObj;
-                            currentObjectClassified.ScaleRectangle(scaleFactor);
-                          //  currentObjectClassified.z = 0.0; //todo
-                           // currentObjectClassified.rotation = 0.0; //todo
-                            currentObjectClassified.feature = "draw";
-                        }
-#endif
-              
+                        int scale = 2;
+                        int contrast = (int)slider.Value;
+                        int adjust = (int)slider1.Value;
+                        var frame = Kimage2CVimg(colorFrame);
+                        //push imag
+                        cnnThread.AddAImage(frame,scale,contrast,adjust);
                     }
+
                 }
             }
         }
 
-// per salvare foto su cartella
+
+        // per salvare foto su cartella
 #if false
           private void SaveFile(System.Drawing.Bitmap frameImg)
           {
@@ -785,29 +675,37 @@
 #endif
 
         //funzione che trasforma il frame nel formato di Emgu
-        public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg (ColorFrame frame)
-          {
+        public Emgu.CV.Image<Bgra, Byte> Kimage2CVimg (ColorFrame frame)
+        {
+            var width = frame.FrameDescription.Width;
+            var heigth = frame.FrameDescription.Height;
+            var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
+            frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
 
-              var width = frame.FrameDescription.Width;
-              var heigth = frame.FrameDescription.Height;
-              var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
-              frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
+            var cvimg = new Emgu.CV.Image<Bgra, Byte>(width, heigth);
+            cvimg.Bytes = data;
 
-              var bitmap = new System.Drawing.Bitmap (width, heigth, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-              var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),  ImageLockMode.WriteOnly,  bitmap.PixelFormat);
-              Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
-              bitmap.UnlockBits(bitmapData);
+            return cvimg;
+        }
 
-              return new Emgu.CV.Image <Bgr, Byte> (bitmap);
-          }
+        public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg (BitmapFrame frame)
+        {
+            MemoryStream outStream = new MemoryStream();
+            BitmapEncoder enc = new BmpBitmapEncoder();
+            enc.Frames.Add(frame);
+            enc.Save(outStream);
+            var bmp = new System.Drawing.Bitmap(outStream);
+
+            return new Image<Bgr, Byte>(bmp);
+        }
 
 
-          /// <summary>
-          /// Handles the body frame data arriving from the sensor
-          /// </summary>
-          /// <param name="sender">object sending the event</param>
-          /// <param name="e">event arguments</param>
-          private void Body_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        /// <summary>
+        /// Handles the body frame data arriving from the sensor
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
+        private void Body_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
           {
               bool dataReceived = false;
 
@@ -1022,137 +920,10 @@
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
-            Windowdepth win2 = new Windowdepth(cClassifierCurrent1[0]);
+            Windowdepth win2 = new Windowdepth(currentObjectClassified[0].classifier);
             win2.Show();
-            
         }
-
-
-        // Adjust Contrast Method
-        public static Emgu.CV.Image<Bgr, Byte> Contrast(System.Drawing.Bitmap sourceBitmap, int threshold)
-          {
-              BitmapData sourceData = sourceBitmap.LockBits(new System.Drawing.Rectangle(0, 0,
-                                          sourceBitmap.Width, sourceBitmap.Height),
-                                          ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            
-              byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
-
-
-              Marshal.Copy(sourceData.Scan0, pixelBuffer, 0, pixelBuffer.Length);
-
-
-              sourceBitmap.UnlockBits(sourceData);
-
-
-              double contrastLevel = Math.Pow((100.0 + threshold) / 100.0, 2);
-
-
-              double blue = 0;
-              double green = 0;
-              double red = 0;
-
-
-              for (int k = 0; k + 4 < pixelBuffer.Length; k += 4)
-              {
-                  blue = ((((pixelBuffer[k] / 255.0) - 0.5) *
-                              contrastLevel) + 0.5) * 255.0;
-
-
-                  green = ((((pixelBuffer[k + 1] / 255.0) - 0.5) *
-                              contrastLevel) + 0.5) * 255.0;
-
-
-                  red = ((((pixelBuffer[k + 2] / 255.0) - 0.5) *
-                              contrastLevel) + 0.5) * 255.0;
-
-
-                  if (blue > 255)
-                  { blue = 255; }
-                  else if (blue < 0)
-                  { blue = 0; }
-
-
-                  if (green > 255)
-                  { green = 255; }
-                  else if (green < 0)
-                  { green = 0; }
-
-
-                  if (red > 255)
-                  { red = 255; }
-                  else if (red < 0)
-                  { red = 0; }
-
-
-                  pixelBuffer[k] = (byte)blue;
-                  pixelBuffer[k + 1] = (byte)green;
-                  pixelBuffer[k + 2] = (byte)red;
-              }
-
-
-              System.Drawing.Bitmap resultBitmap = new System.Drawing.Bitmap(sourceBitmap.Width, sourceBitmap.Height);
-
-
-              BitmapData resultData = resultBitmap.LockBits(new System.Drawing.Rectangle(0, 0,
-                                          resultBitmap.Width, resultBitmap.Height),
-                                          ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-
-
-              Marshal.Copy(pixelBuffer, 0, resultData.Scan0, pixelBuffer.Length);
-              resultBitmap.UnlockBits(resultData);
-
-
-              return new Emgu.CV.Image<Bgr, Byte> (resultBitmap);
-          }
-
-            // Adjust Brightess Method
-            public static Emgu.CV.Image<Bgr, Byte> AdjustBrightness(System.Drawing.Bitmap Image, int value)
-            {
-            System.Drawing.Bitmap TempBitmap = Image;
-            float FinalValue = (float)value / 255.0f;
-            System.Drawing.Bitmap NewBitmap = new System.Drawing.Bitmap(TempBitmap.Width, TempBitmap.Height);
-            System.Drawing.Graphics NewGraphics = System.Drawing.Graphics.FromImage(NewBitmap);
-            float[][] FloatColorMatrix =
-            {
-                new float [] {1,0,0,0,0},
-                new float [] {0,1,0,0,0},
-                new float [] {0,0,1,0,0},
-                new float [] {0,0,0,1,0},
-                new float [] {FinalValue, FinalValue, FinalValue, 1, 1}
-
-            };
-            ColorMatrix NewColorMatrix = new ColorMatrix(FloatColorMatrix);
-            ImageAttributes Attributes = new ImageAttributes();
-            Attributes.SetColorMatrix(NewColorMatrix);
-            NewGraphics.DrawImage(TempBitmap, new System.Drawing.Rectangle(0,0, TempBitmap.Width, 
-                TempBitmap.Height), 0, 0, TempBitmap.Width, TempBitmap.Height, System.Drawing.GraphicsUnit.Pixel, Attributes);
-
-            Attributes.Dispose();
-            NewGraphics.Dispose();
-
-            return new Emgu.CV.Image<Bgr, Byte> (NewBitmap);
-            }
-
-
-
-        //convert  to bitmapSource from bitmap
-        BitmapImage BitmapToImageSource(System.Drawing.Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-
-                return bitmapimage;
-            }
-        }
+        
 
         private void EventClosed(object sender, EventArgs e)
         {
