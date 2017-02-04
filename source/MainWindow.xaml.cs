@@ -3,22 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Drawing.Imaging;
     using Emgu.CV;
     using Emgu.CV.Structure;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
-    using System.Runtime.InteropServices;
     using System.Windows.Threading;
     using System.Windows.Forms;
     using System.IO;
     using System.Globalization;
-    using System.Net.Sockets;
-    using System.Net;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Microsoft.Samples.Kinect.BodyBasics.source;
 
 
@@ -162,7 +156,7 @@
             new ClassifiedObject()
         };
 
-        //cnn thread
+        //cnn thread -> thread che esegue la classificazione
         CNNThread cnnThread;
 
         //Upload model Button
@@ -242,27 +236,27 @@
                         }
                     }
 
-                    //ui
+                    //ui upload
                     if (!currentObjectClassified[0].name.Equals(""))
                     {
                         Nome1.Content = currentObjectClassified[0].name;
-                        X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
                     }
                     else
                     {
                         Nome1.Content = "";
-                        X.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
                     }
                     //ui
                     if (!currentObjectClassified[1].name.Equals(""))
                     {
                         Nome2.Content = currentObjectClassified[1].name;
-                        X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\check.png"));
+                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
                     }
                     else
                     {
                         Nome2.Content = "";
-                        X1.Source = new BitmapImage(new Uri(@"C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png"));
+                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
                     }
 
                 }
@@ -509,7 +503,7 @@
 
                 for (int i = 0; i < currentObjectClassified.Length; ++i)
                 {
-                    // Draw a transparent background to set the render size
+                    // Blocco la thread secondoaria fin quando la prima thread non ha fatto il disegno
                     lock(cnnThread.mutex)
                     {
                         if (currentObjectClassified[i].feature.Equals("draw"))
@@ -544,9 +538,10 @@
 
                             }
                         }
+
+                        //sblocco la thread dopo aver disengnato
                     }
-         
-               
+             
                 }
 
                 if (this.bodies != null)
@@ -591,8 +586,7 @@
                 }
             }
         }
-        
-
+  
         /// <summary>
         /// Handles the color frame data arriving from the sensor
         /// </summary>
@@ -614,9 +608,7 @@
                         using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
                         {
                             //lock image
-                            
-                            
-                            this.colorImageToDraw.Lock();
+                           this.colorImageToDraw.Lock();
                             
                             // verify data and write the new color frame data to the display bitmap
                             if ((colorFrameDescription.Width == this.colorImageToDraw.PixelWidth) &&
@@ -636,7 +628,7 @@
                     //compute frame rate
                     colorFrameAccTime += colorFrame.ColorCameraSettings.FrameInterval.TotalSeconds;
 
-                    //preview
+                    //preview stessa cosa di sopra blocco la thread secondaria per far si che sia possibile mostrare l'immagine di preview
                     lock (cnnThread.mutex)  {
                         if (cnnThread.imagePreview != null)
                             img.Source = cnnThread.imagePreview;
@@ -650,7 +642,7 @@
                         int contrast = (int)slider.Value;
                         int adjust = (int)slider1.Value;
                         var frame = Kimage2CVimg(colorFrame);
-                        //push imag
+                        //push imag chiamo il metodo AddAimage 
                         cnnThread.AddAImage(frame,scale,contrast,adjust);
                     }
 
@@ -688,6 +680,7 @@
             return cvimg;
         }
 
+        //funzione che trasforma il frame nel formato di Emgu (senza il canale a)
         public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg (BitmapFrame frame)
         {
             MemoryStream outStream = new MemoryStream();
@@ -945,8 +938,7 @@
 
             this.Close();
             
-
-
+  
         }
     }
   }

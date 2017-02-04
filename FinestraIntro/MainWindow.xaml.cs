@@ -1,21 +1,4 @@
 ﻿using System.Windows;
-using Microsoft.Samples.Kinect.BodyBasics;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing.Imaging;
-
-
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-using System.Runtime.InteropServices;
-using System.Windows.Threading;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using System.Net.Sockets;
-using System.Net;
 
 
 namespace FinestraIntro
@@ -43,9 +26,6 @@ namespace FinestraIntro
 
 
         }
-
-      
-        
 
         //open ObjectRec
         private void button1_Click(object sender, RoutedEventArgs e)

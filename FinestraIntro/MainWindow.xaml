@@ -33,9 +33,9 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <Image x:Name="image" Source="C:\Users\tavea\Documents\GitHub\Tesi\FinestraIntro\ImageIcon\logoUni.jpg"  HorizontalAlignment="Right" Height="110" Margin="0,0,20,30" VerticalAlignment="Bottom" Width="114"/>
-        <Image x:Name="image1" Source="C:\Users\tavea\Documents\GitHub\Tesi\FinestraIntro\ImageIcon\Status.png" HorizontalAlignment="Left" Height="111" Margin="45,41,0,0" VerticalAlignment="Top" Width="521"/>
-        <Image x:Name="image2" Source="C:\Users\tavea\Documents\GitHub\Tesi\FinestraIntro\ImageIcon\forhealth.png" HorizontalAlignment="Left" Height="76" Margin="45,156,0,0" VerticalAlignment="Top" Width="322"/>
+        <Image x:Name="image" Source="ImageIcon\logoUni.jpg"  HorizontalAlignment="Right" Height="110" Margin="0,0,20,30" VerticalAlignment="Bottom" Width="114"/>
+        <Image x:Name="image1" Source="ImageIcon\Status.png" HorizontalAlignment="Left" Height="111" Margin="45,41,0,0" VerticalAlignment="Top" Width="521"/>
+        <Image x:Name="image2" Source="ImageIcon\forhealth.png" HorizontalAlignment="Left" Height="76" Margin="45,156,0,0" VerticalAlignment="Top" Width="322"/>
         <Button x:Name="button"  Style ="{StaticResource SelectImagesPathButton}" Content="GenDataset" HorizontalAlignment="Left" Margin="334,0,0,180" VerticalAlignment="Bottom" Width="84" Click="button_Click" ToolTip="Generate new Dataset"/>
         <Button x:Name="button1" Style ="{StaticResource SelectImagesPathButton}" Content="ObjectRecognition" HorizontalAlignment="Left" Margin="334,0,0,104" VerticalAlignment="Bottom" Width="128" Click="button1_Click" ToolTip="Recognize from an esisting Model"/>
         <Button x:Name="button2" Style ="{StaticResource SelectImagesPathButton}" Content="Quit" HorizontalAlignment="Left" Margin="38,0,0,18" VerticalAlignment="Bottom" Width="75" Click="button2_Click" FontSize="24" />

@@ -67,8 +67,8 @@
         <Label x:Name="CenterY2" Content="CenterY" HorizontalAlignment="Right" Margin="0,6,415,0" VerticalAlignment="Top"/>
         <Label x:Name="Oggetto1" Content="Oggetto1:"  Margin="0,32,697,0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="12" Foreground="#FF52318F" Height="28" Grid.RowSpan="2"/>
         <Label x:Name="Oggetto2" Content="Oggetto2:"  Margin="0,6,696,0" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="12" Foreground="#FF52318F" Height="27"/>
-        <Image x:Name="X" Source="C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png" HorizontalAlignment="Right" Height="34" Margin="0,29,621,0" VerticalAlignment="Top" Width="35" Grid.RowSpan="2"/>
-        <Image x:Name="X1" Source="C:\Users\tavea\Documents\GitHub\Tesi\ButtonIcon\close.png" HorizontalAlignment="Right" Height="34" Margin="0,4,621,0" VerticalAlignment="Top" Width="35"/>
+        <Image x:Name="X" Source="/BodyBasics-WPF;component/ButtonIcon/close.png" HorizontalAlignment="Right" Height="34" Margin="0,29,621,0" VerticalAlignment="Top" Width="35" Grid.RowSpan="2"/>
+        <Image x:Name="X1" Source="/BodyBasics-WPF;component/Images/close.png" HorizontalAlignment="Right" Height="34" Margin="0,4,621,0" VerticalAlignment="Top" Width="35"/>
         <Label x:Name="Nome2"  HorizontalAlignment="Right" Margin="0,4,646,0" VerticalAlignment="Top"/>
         <Label x:Name="Nome1"  HorizontalAlignment="Right" Margin="0,33,646,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
         <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Height="64" Margin="133,0,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="3" Visibility="Hidden"/>

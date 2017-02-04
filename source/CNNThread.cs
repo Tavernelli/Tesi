@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using System.IO;
 using System.ComponentModel;
 using System.Windows;
 
@@ -232,7 +226,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
 
         private void Execute_CNN(Image<Bgr, Byte> frameImg, int scaleFactor)
         {
-            ///////////////////////////////////////////////////////////////////
+            
             //Flip image (?)
             //frameImg = frameImg.Flip(Emgu.CV.CvEnum.FlipType.Horizontal);
             //Image to gray scale

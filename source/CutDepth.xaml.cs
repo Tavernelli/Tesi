@@ -87,10 +87,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
 
         }
-
      
-        
-        
         /// <summary>
         /// Execute shutdown tasks
         /// </summary>

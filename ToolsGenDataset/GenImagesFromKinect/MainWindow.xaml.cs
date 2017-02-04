@@ -2,13 +2,11 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using System.Windows.Forms;
     using Microsoft.Kinect;
     using System.Windows.Threading;
     using System.Windows.Input;
