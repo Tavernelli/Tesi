@@ -5,7 +5,7 @@ using Emgu.CV.Structure;
 
 namespace Microsoft.Samples.Kinect.BodyBasics
 {
-    class ClassifiedObject
+    public class ClassifiedObject
     {
 
         private Rectangle mRect;

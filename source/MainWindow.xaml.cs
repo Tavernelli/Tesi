@@ -193,81 +193,6 @@
 
         }
 #endif
-        //Upload model Button
-        private void UploadModel_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string pathDir = dialog.SelectedPath;
-                string pathFile = pathDir + "\\cascade.xml";
-
-                if (File.Exists(pathFile))
-                {
-                    //open model
-                    sSelectedFile = pathFile;
-                    bool doreset = true;
-
-                    for (int i = 0; i != currentObjectClassified.Length; ++i)
-                    {
-                        if (currentObjectClassified[i].classifier == null) { doreset = false; break; }
-                    }
-
-                    if(doreset)
-                    {
-                        for (int i = 0; i != currentObjectClassified.Length; ++i)
-                        {
-                            currentObjectClassified[i].classifier = null;
-                            currentObjectClassified[i].name = "";
-                        }
-                    }
-
-                    for(int i = 0; i != currentObjectClassified.Length; ++i)
-                    {
-                        if (currentObjectClassified[i].classifier == null)
-                        {
-                            currentObjectClassified[i].classifier = new CascadeClassifier(sSelectedFile);
-                            //get name
-                            string[] pathsplit = pathDir.Split('@');
-                            //if splitted:
-                            currentObjectClassified[i].name = pathsplit.Length > 1 ? pathsplit[1] : "";
-                            //done
-                            break;
-                        }
-                    }
-
-                    //ui upload
-                    if (!currentObjectClassified[0].name.Equals(""))
-                    {
-                        Nome1.Content = currentObjectClassified[0].name;
-                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
-                    }
-                    else
-                    {
-                        Nome1.Content = "";
-                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
-                    }
-                    //ui
-                    if (!currentObjectClassified[1].name.Equals(""))
-                    {
-                        Nome2.Content = currentObjectClassified[1].name;
-                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
-                    }
-                    else
-                    {
-                        Nome2.Content = "";
-                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
-                    }
-
-                }
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("Not found cascade.xml in:\n" + pathDir, "Error to load model", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-        }
-
         //Image scene
         private WriteableBitmap colorImageToDraw = null;
 
@@ -389,6 +314,83 @@
             this.InitializeComponent();
 
          
+        }
+
+
+
+        //Upload model Button
+        private void UploadModel_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string pathDir = dialog.SelectedPath;
+                string pathFile = pathDir + "\\cascade.xml";
+
+                if (File.Exists(pathFile))
+                {
+                    //open model
+                    sSelectedFile = pathFile;
+                    bool doreset = true;
+
+                    for (int i = 0; i != currentObjectClassified.Length; ++i)
+                    {
+                        if (currentObjectClassified[i].classifier == null) { doreset = false; break; }
+                    }
+
+                    if (doreset)
+                    {
+                        for (int i = 0; i != currentObjectClassified.Length; ++i)
+                        {
+                            currentObjectClassified[i].classifier = null;
+                            currentObjectClassified[i].name = "";
+                        }
+                    }
+
+                    for (int i = 0; i != currentObjectClassified.Length; ++i)
+                    {
+                        if (currentObjectClassified[i].classifier == null)
+                        {
+                            currentObjectClassified[i].classifier = new CascadeClassifier(sSelectedFile);
+                            //get name
+                            string[] pathsplit = pathDir.Split('@');
+                            //if splitted:
+                            currentObjectClassified[i].name = pathsplit.Length > 1 ? pathsplit[1] : "";
+                            //done
+                            break;
+                        }
+                    }
+
+                    //ui upload
+                    if (!currentObjectClassified[0].name.Equals(""))
+                    {
+                        Nome1.Content = currentObjectClassified[0].name;
+                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
+                    }
+                    else
+                    {
+                        Nome1.Content = "";
+                        X.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
+                    }
+                    //ui
+                    if (!currentObjectClassified[1].name.Equals(""))
+                    {
+                        Nome2.Content = currentObjectClassified[1].name;
+                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/check.png", UriKind.RelativeOrAbsolute));
+                    }
+                    else
+                    {
+                        Nome2.Content = "";
+                        X1.Source = new BitmapImage(new Uri("/BodyBasics-WPF;component/ButtonIcon/close.png", UriKind.RelativeOrAbsolute));
+                    }
+
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Not found cascade.xml in:\n" + pathDir, "Error to load model", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
         }
 
         /// <summary>
@@ -913,7 +915,7 @@
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
-            Windowdepth win2 = new Windowdepth(currentObjectClassified[0].classifier);
+            Windowdepth win2 = new Windowdepth(new ClassifiedObject[1] { currentObjectClassified[0] });
             win2.Show();
         }
         

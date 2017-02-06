@@ -2,6 +2,7 @@
 using Emgu.CV.Structure;
 using Microsoft.Kinect;
 using Microsoft.Samples.Kinect.BodyBasics;
+using Microsoft.Samples.Kinect.BodyBasics.source;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,6 +29,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// The DPI.
         /// </summary>
         readonly double DPI = 96.0;
+
+     
 
         /// <summary>
         /// Default format.
@@ -121,7 +124,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <param name="colorFrame">The specified color frame.</param>
         /// <param name="bodyIndexFrame">The specified body index frame.</param>
         /// <returns>The corresponding System.Windows.Media.Imaging.BitmapSource representation of image.</returns>
-        public BitmapSource GreenScreen(ColorFrame colorFrame, DepthFrame depthFrame, BodyIndexFrame bodyIndexFrame, CascadeClassifier cClassifierObj)
+        public WriteableBitmap GreenScreen(ColorFrame colorFrame, DepthFrame depthFrame, BodyIndexFrame bodyIndexFrame)
         {
             int colorWidth = colorFrame.FrameDescription.Width;
             int colorHeight = colorFrame.FrameDescription.Height;
@@ -190,98 +193,17 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     }
                 }
 
-                //------------------------------------- Object recognition -----------------------------------------
+              
 
-
-
-                //compute frame rate
-
-                colorFrameAccTime += colorFrame.ColorCameraSettings.FrameInterval.TotalSeconds;
-                //about 0.33 secs
-                if (TimeToClassificationColorFrame <= colorFrameAccTime)
-                {
-                    //Reset accumulator
-                    colorFrameAccTime = 0.0;
-                    int scaleFactor = 2;
-                    //K image to Emgu image                
-                    Image<Bgr, byte> frameImg = Kimage2CVimg(colorFrame);
-
-                    //Rescale
-                    frameImg = frameImg.Resize(frameImg.Width / scaleFactor, frameImg.Height / scaleFactor, Emgu.CV.CvEnum.Inter.Linear);
-
-                    //Image to gray scale
-                    Image<Gray, byte> grayframe = frameImg.Convert<Gray, byte>();
-
-
-                    if (cClassifierObj != null)
-                    {
-                        ///////////////////////////////////////////////////////////////////
-                        System.Drawing.Rectangle[] gettedObjects = cClassifierObj.DetectMultiScale(grayframe, 1.05, 3);
-
-                        //glasses objects
-                        currentObjectClassified.feature = "nodraw";
-                        foreach (var rectObj in gettedObjects)
-                        {
-                            //take center
-                            currentObjectClassified.rectangle = rectObj;
-                            currentObjectClassified.ScaleRectangle(scaleFactor);
-                            currentObjectClassified.z = 0.0; //todo
-                            currentObjectClassified.rotation = 0.0; //todo
-                            currentObjectClassified.feature = "draw";
-                        }
-
-                    }
-                }
                 _bitmap.Lock();
 
-                var bmp = new System.Drawing.Bitmap(_bitmap.PixelWidth, _bitmap.PixelHeight,
-                                    _bitmap.BackBufferStride,
-                                    System.Drawing.Imaging.PixelFormat.Format32bppRgb,
-                                    _bitmap.BackBuffer);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
-
                 Marshal.Copy(_displayPixels, 0, _bitmap.BackBuffer, _displayPixels.Length);
-
                 _bitmap.AddDirtyRect(new Int32Rect(0, 0, depthWidth, depthHeight));
-
-                if (currentObjectClassified.feature.Equals("draw"))
-                {
-                    int scalefactorX = 4;
-                    double scalefactorY = 2.75;
-                    int scalefactorRect = 2; 
-                    Rectangle rect = new Rectangle(currentObjectClassified.rectangle.X / scalefactorX,
-                                             (int)(currentObjectClassified.rectangle.Y / scalefactorY),
-                                             currentObjectClassified.rectangle.Width / scalefactorRect,
-                                             currentObjectClassified.rectangle.Height / scalefactorRect);
-                    System.Drawing.Pen OrangePen = new System.Drawing.Pen(System.Drawing.Color.Orange, 3);
-                    g.DrawRectangle(OrangePen, rect);
-
-                }
 
                 _bitmap.Unlock();
             }
 
-
             return _bitmap;
-        }
-
-
-        //CONVERTO DA COLORFRAME A EMGU
-        public Emgu.CV.Image<Bgr, Byte> Kimage2CVimg(ColorFrame frame)
-        {
-
-            var width = frame.FrameDescription.Width;
-            var heigth = frame.FrameDescription.Height;
-            var data = new byte[width * heigth * System.Windows.Media.PixelFormats.Bgra32.BitsPerPixel / 8];
-            frame.CopyConvertedFrameDataToArray(data, ColorImageFormat.Bgra);
-
-
-            var bitmap = new System.Drawing.Bitmap(width, heigth, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
-            Marshal.Copy(data, 0, bitmapData.Scan0, data.Length);
-            bitmap.UnlockBits(bitmapData);
-
-            return new Emgu.CV.Image<Bgr, Byte>(bitmap);
         }
 
 
