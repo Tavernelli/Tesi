@@ -159,40 +159,6 @@
         //cnn thread -> thread che esegue la classificazione
         CNNThread cnnThread;
 
-        //Upload model Button
-#if false       
-            private void UploadModel_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string pathDir  = dialog.SelectedPath;
-                string pathFile = pathDir + "\\cascade.xml";
-                if (File.Exists(pathFile))
-                {
-                    //open model
-                    sSelectedFile = pathFile;
-                    cClassifierCurrent = new CascadeClassifier(sSelectedFile);
-                    //get name of object
-                    string[] pathsplit = pathDir.Split('@');
-                    //if splitted:
-                    if(pathsplit.Length > 1)
-                    {
-                        currentObjectClassified.name = pathsplit[1];
-                    }
-                    else
-                    {
-                        currentObjectClassified.name = "";
-                    }
-                }
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("Not found cascade.xml in:\n" + pathDir, "Error to load model", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-        }
-#endif
         //Image scene
         private WriteableBitmap colorImageToDraw = null;
 

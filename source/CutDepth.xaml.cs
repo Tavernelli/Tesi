@@ -99,6 +99,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             this.InitializeComponent();
         }
 
+        //this metod update the scene every 33 millisecondi
         void DrawUpdate(object sender, System.EventArgs e)
         {
             //draw object
@@ -204,7 +205,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         }
 
-        //funzione che trasforma il frame nel formato di Emgu (senza il canale a)
+        //funzione che trasforma il frame nel formato di Emgu
         public Emgu.CV.Image<Bgra, Byte> Kimage2CVimg(BitmapFrame frame)
         {
             MemoryStream outStream = new MemoryStream();
