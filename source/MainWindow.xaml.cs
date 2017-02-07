@@ -881,7 +881,7 @@
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
         {
-            Windowdepth win2 = new Windowdepth(new ClassifiedObject[1] { currentObjectClassified[0] });
+            Windowdepth win2 = new Windowdepth(new ClassifiedObject[2] { currentObjectClassified[0], currentObjectClassified[1] });
             win2.Show();
         }
         
