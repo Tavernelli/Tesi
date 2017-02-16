@@ -1,16 +1,6 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using Microsoft.Kinect;
-using Microsoft.Samples.Kinect.BodyBasics;
-using Microsoft.Samples.Kinect.BodyBasics.source;
+﻿using Microsoft.Kinect;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;

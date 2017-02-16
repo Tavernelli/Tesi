@@ -13,6 +13,7 @@
     using System.Windows.Forms;
     using System.IO;
     using System.Globalization;
+    using System.Windows.Controls;
     using Microsoft.Samples.Kinect.BodyBasics.source;
 
 
@@ -456,17 +457,21 @@
                     dc.DrawImage(colorImageToDraw, new Rect(0, 0, colorImageToDraw.Width, colorImageToDraw.Height));
                     
                 }
+                // parametric label (solo una piccola miglioria che permette di rendere tutto parametrico) 
+                var xy_labels = new System.Windows.Controls.Label[][]
+                {
+                    new  System.Windows.Controls.Label[]{ CenterX,CenterY },
+                    new  System.Windows.Controls.Label[]{ CenterX2,CenterY2 }
+                };
                 
-                if (currentObjectClassified[0].feature.Equals("draw"))
+                for(int i = 0; i != currentObjectClassified.Length && i != xy_labels.Length; ++i)
                 {
-                    CenterX.Content = currentObjectClassified[0].rectangle.X + (int)(currentObjectClassified[0].rectangle.Width / 2);
-                    CenterY.Content = currentObjectClassified[0].rectangle.Y + (int)(currentObjectClassified[0].rectangle.Height / 2);
-                }
+                    if (currentObjectClassified[i].feature.Equals("draw"))
+                    {
+                        xy_labels[i][0].Content = currentObjectClassified[i].center.X;
+                        xy_labels[i][1].Content = currentObjectClassified[i].center.Y;
 
-                if (currentObjectClassified[1].feature.Equals("draw"))
-                {
-                    CenterX2.Content = currentObjectClassified[1].rectangle.X + (int)(currentObjectClassified[1].rectangle.Width / 2);
-                    CenterY2.Content = currentObjectClassified[1].rectangle.Y + (int)(currentObjectClassified[1].rectangle.Height / 2);
+                    }
                 }
 
                 for (int i = 0; i < currentObjectClassified.Length; ++i)

@@ -1,7 +1,5 @@
 ﻿using System.Drawing;
-using System.Threading;
 using Emgu.CV;
-using Emgu.CV.Structure;
 
 namespace Microsoft.Samples.Kinect.BodyBasics
 {
@@ -14,6 +12,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private string mFeature = "";
         private string mName = "";
         private CascadeClassifier mClassifier;
+        private Point mCenter = new Point();
 
         public ClassifiedObject(){ }
 
@@ -29,12 +28,22 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
         }
 
+        public Point center
+        {
+            get
+            {
+                return mCenter;
+            }
+        }
+
         //Object Rectangle
         public Rectangle rectangle
         {
             set
             {
                 mRect = value;
+                mCenter.X = mRect.X + (mRect.Width / 2);
+                mCenter.Y = mRect.Y + (mRect.Height / 2);
             }
             get
             {
