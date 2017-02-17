@@ -54,6 +54,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         private double colorFrameAccTime = 0.0;
 
 
+
+
         /// <summary>
         /// The depth values.
         /// </summary>

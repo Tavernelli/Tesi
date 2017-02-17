@@ -22,7 +22,7 @@
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        
+
 
         /// <summary>
         /// Radius of drawn hand circles
@@ -105,6 +105,20 @@
         private BodyFrameReader bodyFrameReader = null;
 
         /// <summary>
+        /// Reader for body frames
+        /// </summary>
+        private DepthFrameReader depthFrameReader = null;
+
+        /// <summary>
+        /// The depth values.
+        /// </summary>
+        private ushort[] depthData = null;
+        private int depthWidth;
+        private int depthHeight;
+        private double depthMin = 0.0;
+        private double depthMax = 1.0;
+
+        /// <summary>
         /// Reader for color frames
         /// </summary>
         private ColorFrameReader colorFrameReader = null;
@@ -165,6 +179,7 @@
 
         //draw update timer
         protected DispatcherTimer drawUpdateTimer;
+        private ColorSpacePoint[] _colorPoints;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -204,6 +219,9 @@
             
             // open the reader for the color frames
             this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
+
+            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+
 
             // a bone defined as a line between two joints
             this.bones = new List<Tuple<JointType, JointType>>();
@@ -415,11 +433,34 @@
                 this.bodyFrameReader.FrameArrived += this.Body_FrameArrived;
             }
 
+            if (this.depthFrameReader != null)
+            {
+                this.depthFrameReader.FrameArrived += this.Depth_FrameArrived;
+            }
+
             if (this.colorFrameReader != null)
             {
                 this.colorFrameReader.FrameArrived += this.Color_FrameArrived;
             }
         }
+
+        private void Depth_FrameArrived(object sender, DepthFrameArrivedEventArgs e)
+        {
+            using (DepthFrame depthframe = e.FrameReference.AcquireFrame())
+            {
+                if (depthframe != null)
+                {
+                    depthMin = depthframe.DepthMinReliableDistance;
+                    depthMax = depthframe.DepthMaxReliableDistance;
+                    depthWidth = depthframe.FrameDescription.Width;
+                    depthHeight = depthframe.FrameDescription.Height;
+                    depthData = new ushort[depthWidth * depthHeight];
+                    depthframe.CopyFrameDataToArray(depthData);
+                }
+            }
+        }
+
+    
 
         /// <summary>
         /// Execute shutdown tasks
@@ -441,6 +482,7 @@
                 this.kinectSensor = null;
             }
         }
+
 
         /// <summary>
         /// Draw scene
@@ -471,6 +513,7 @@
                         xy_labels[i][0].Content = currentObjectClassified[i].center.X;
                         xy_labels[i][1].Content = currentObjectClassified[i].center.Y;
 
+                   
                     }
                 }
 
@@ -616,7 +659,20 @@
                         int adjust = (int)slider1.Value;
                         var frame = Kimage2CVimg(colorFrame);
                         //push imag chiamo il metodo AddAimage 
-                        cnnThread.AddAImage(frame,scale,contrast,adjust);
+                        cnnThread.AddAImage(
+                            frame,
+                            scale,
+                            contrast,
+                            adjust,
+                            depthData,
+                            depthWidth,
+                            //
+                            colorFrame.FrameDescription.Width / depthWidth,
+                            colorFrame.FrameDescription.Height / depthHeight,
+                            //
+                            depthMin,
+                            depthMax
+                        );
                     }
 
                 }
@@ -681,6 +737,7 @@
                   {
                       if (this.bodies == null)
                       {
+                          
                           this.bodies = new Body[bodyFrame.BodyCount];
                       }
                       // The first time GetAndRefreshBodyData is called, Kinect will allocate each Body in the array.
@@ -901,6 +958,12 @@
             if (bodyFrameReader != null)
             {
                 bodyFrameReader.Dispose();
+
+            }
+
+            if (depthFrameReader != null)
+            {
+                depthFrameReader.Dispose();
 
             }
 

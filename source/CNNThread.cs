@@ -19,6 +19,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
         protected BitmapSource lastImagePrev = null;
         protected Image<Bgra, Byte> lastImage = null;
         protected Image<Bgra, Byte> nextImage = null;
+        protected double lastDepthMin = 0.0;
+        protected double lastDepthMax = 0.0;
+        protected double lastDepthPosTactorX = 0.0;
+        protected double lastDepthPosTactorY = 0.0;
+        protected int    lastDepthWidth = 0;
+        protected ushort[] lastDepthImage = null;
+        protected double nextDepthMin = 0.0;
+        protected double nextDepthMax = 0.0;
+        protected double nextDepthPosTactorX = 0.0;
+        protected double nextDepthPosTactorY = 0.0;
+        protected int    nextDepthWidth = 0;
+        protected ushort[] nextDepthImage = null;
         protected int nextScale = 2;
         protected int nextContrast = 0;
         protected int nextAdj = 0;
@@ -58,7 +70,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
         public void Join() { loop = false;  _thread.Join(); }
         public bool IsAlive { get { return _thread.IsAlive; } }
 
-        public void AddAImage(Image<Bgra, Byte> new_image,int scale, int contrast, int adj)
+        public void AddAImage(
+            Image<Bgra, Byte> new_image,
+            int scale,
+            int contrast,
+            int adj,
+            ushort[] depthMap,
+            int depthWidth,
+            double depthPosTactorX,
+            double depthPosTactorY,
+            double depthMin,
+            double depthMax
+        )
         {
             lock(_mutex)
             {
@@ -66,6 +89,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                 nextScale = scale;
                 nextContrast = contrast;
                 nextAdj = adj;
+                nextDepthImage = depthMap;
+                nextDepthWidth = depthWidth;
+                nextDepthPosTactorX = depthPosTactorX;
+                nextDepthPosTactorY = depthPosTactorY;
+                nextDepthMin = depthMin;
+                nextDepthMax = depthMax;
             }
         }
 
@@ -90,6 +119,12 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                         contrast = nextContrast;
                         adj = nextAdj;
                         lastImage = image;
+                        lastDepthImage = nextDepthImage;
+                        lastDepthWidth = nextDepthWidth;
+                        lastDepthPosTactorX = nextDepthPosTactorX;
+                        lastDepthPosTactorY = nextDepthPosTactorY;
+                        lastDepthMin = nextDepthMin;
+                        lastDepthMax = nextDepthMax;
                     }
                 }
 
@@ -244,6 +279,18 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                         currentObjectClassified[i].rectangle = rectObj;
                         currentObjectClassified[i].ScaleRectangle(scaleFactor);
                         currentObjectClassified[i].feature = "draw";
+                        if (lastDepthImage != null)
+                        {
+                            currentObjectClassified[i].depth = GetZPosFromDepthFrame
+                            (
+                                lastDepthImage,
+                                lastDepthWidth,
+                                lastDepthMin,
+                                lastDepthMax,
+                                (int)(currentObjectClassified[i].center.X * (1.0 / lastDepthPosTactorX)),
+                                (int)(currentObjectClassified[i].center.Y * (1.0 / lastDepthPosTactorY))
+                            );
+                        }
                     }
                 }
             }
@@ -279,6 +326,24 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
             //return
             return bitSrc;
         }
+
+        //cet zvalue
+        static protected double GetZPosFromDepthFrame
+        (
+            ushort[] depthData,
+            int depthWidth,
+            double min,
+            double max,
+            int pos_x,
+            int pos_y
+        )
+        {
+            //to do: if u_at_pos is 0, try to get depth from near points
+            ushort u_at_pos = depthData[pos_x + pos_y * depthWidth];
+            double norm_depth = u_at_pos > min ? ((double)(u_at_pos) - min) / (max - min) : 0.0;
+            return norm_depth;
+        }
+
 
 
     }

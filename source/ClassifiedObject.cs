@@ -63,7 +63,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         }
 
         //Object Z axis (depth)
-        public double z
+        public double depth
         {
             set
             {

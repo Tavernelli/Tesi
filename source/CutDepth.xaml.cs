@@ -197,8 +197,26 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                         int contrast = (int)0.0;
                         int adjust = (int)0.0;
                         var frame = Kimage2CVimg(BitmapFrame.Create(depthImageFiltered));
+                        //
+                        double depthMin = depthFrame.DepthMinReliableDistance;
+                        double depthMax = depthFrame.DepthMaxReliableDistance;
+                        int depthWidth = depthFrame.FrameDescription.Width;
+                        int depthHeight = depthFrame.FrameDescription.Height;
+                        ushort[] depthData = new ushort[depthWidth * depthHeight];
+                        depthFrame.CopyFrameDataToArray(depthData);
                         //push imag chiamo il metodo AddAimage 
-                        cnnThread.AddAImage(frame, scale, contrast, adjust);
+                        cnnThread.AddAImage(
+                            frame,
+                            scale,
+                            contrast,
+                            adjust,
+                            depthData,
+                            depthWidth,
+                            colorFrame.FrameDescription.Width / depthWidth,
+                            colorFrame.FrameDescription.Height / depthHeight,
+                            depthMin,
+                            depthMax
+                        );
                     }
                 }
             }
