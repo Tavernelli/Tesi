@@ -21,14 +21,14 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
         protected Image<Bgra, Byte> nextImage = null;
         protected double lastDepthMin = 0.0;
         protected double lastDepthMax = 0.0;
-        protected double lastDepthPosTactorX = 0.0;
-        protected double lastDepthPosTactorY = 0.0;
+        protected double lastDepthPosFactorX = 0.0;
+        protected double lastDepthPosFactorY = 0.0;
         protected int    lastDepthWidth = 0;
         protected ushort[] lastDepthImage = null;
         protected double nextDepthMin = 0.0;
         protected double nextDepthMax = 0.0;
-        protected double nextDepthPosTactorX = 0.0;
-        protected double nextDepthPosTactorY = 0.0;
+        protected double nextDepthPosFactorX = 0.0;
+        protected double nextDepthPosFactorY = 0.0;
         protected int    nextDepthWidth = 0;
         protected ushort[] nextDepthImage = null;
         protected int nextScale = 2;
@@ -77,8 +77,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
             int adj,
             ushort[] depthMap,
             int depthWidth,
-            double depthPosTactorX,
-            double depthPosTactorY,
+            double depthPosFactorX,
+            double depthPosFactorY,
             double depthMin,
             double depthMax
         )
@@ -91,8 +91,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                 nextAdj = adj;
                 nextDepthImage = depthMap;
                 nextDepthWidth = depthWidth;
-                nextDepthPosTactorX = depthPosTactorX;
-                nextDepthPosTactorY = depthPosTactorY;
+                nextDepthPosFactorX = depthPosFactorX;
+                nextDepthPosFactorY = depthPosFactorY;
                 nextDepthMin = depthMin;
                 nextDepthMax = depthMax;
             }
@@ -121,8 +121,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                         lastImage = image;
                         lastDepthImage = nextDepthImage;
                         lastDepthWidth = nextDepthWidth;
-                        lastDepthPosTactorX = nextDepthPosTactorX;
-                        lastDepthPosTactorY = nextDepthPosTactorY;
+                        lastDepthPosFactorX = nextDepthPosFactorX;
+                        lastDepthPosFactorY = nextDepthPosFactorY;
                         lastDepthMin = nextDepthMin;
                         lastDepthMax = nextDepthMax;
                     }
@@ -287,8 +287,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
                                 lastDepthWidth,
                                 lastDepthMin,
                                 lastDepthMax,
-                                (int)(currentObjectClassified[i].center.X * (1.0 / lastDepthPosTactorX)),
-                                (int)(currentObjectClassified[i].center.Y * (1.0 / lastDepthPosTactorY))
+                                (int)(currentObjectClassified[i].center.X * (1.0 / lastDepthPosFactorX)),
+                                (int)(currentObjectClassified[i].center.Y * (1.0 / lastDepthPosFactorY))
                             );
                         }
                     }
