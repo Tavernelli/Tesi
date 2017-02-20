@@ -13,8 +13,11 @@
     using System.Windows.Forms;
     using System.IO;
     using System.Globalization;
-    using System.Windows.Controls;
     using Microsoft.Samples.Kinect.BodyBasics.source;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading;
+    using System.Net;
 
 
     /// <summary>
@@ -23,6 +26,33 @@
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
+
+#region Client
+
+        // The port number for the remote device.
+        private const int port = 42001;
+
+        // ManualResetEvent instances signal completion.
+        private static ManualResetEvent connectDone = new ManualResetEvent(false);
+        private static ManualResetEvent sendDone = new ManualResetEvent(false);
+        private static ManualResetEvent receiveDone = new ManualResetEvent(false);
+
+        // The response from the remote device.
+        private static String response = String.Empty;
+
+        //socket che permette il collegamento al Creator
+        private Socket client;
+        //stringa di testo da inviare al socket client
+        private string invioDati;
+        //contatore, arrivato a 20 effettua una chiamata di ricezione dei dati per svuotare la memoria
+        private int itr = 0;
+        //fine serve per chiudere il while se non si connette il socket e si esce dal programma
+        private bool fine = false;
+        //thread utilizzato per connettersi al socket
+        Thread trd;
+
+
+#endregion
 
         /// <summary>
         /// Radius of drawn hand circles
@@ -179,13 +209,39 @@
 
         //draw update timer
         protected DispatcherTimer drawUpdateTimer;
-        private ColorSpacePoint[] _colorPoints;
-
+        
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
         {
+            #region client
+
+
+            try
+            {
+                // Establish the remote endpoint for the socket.
+                // The name of the 
+                // remote device is "host.contoso.com".
+
+                // Create a TCP/IP socket.
+                client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                // cerca di connettersi al socket
+                trd = new Thread(NewConnectThread);
+                trd.Start();
+                // Connect to the remote endpoint.
+                //client.BeginConnect(remoteEP,new AsyncCallback(ConnectCallback), client);
+                //connectDone.WaitOne();
+            }
+            catch (Exception er)
+            {
+                //MessageBox.Show("err01 "+ er.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Console.WriteLine(er.ToString());
+            }
+
+            #endregion
+
             //Cnn tread
             cnnThread = new CNNThread(currentObjectClassified);
 
@@ -427,7 +483,7 @@
         /// <param name="e">event arguments</param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-        
+            
             if (this.bodyFrameReader != null)
             {
                 this.bodyFrameReader.FrameArrived += this.Body_FrameArrived;
@@ -469,6 +525,7 @@
         /// <param name="e">event arguments</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
+            fine = true;
             if (this.bodyFrameReader != null)
             {
                 // BodyFrameReader is IDisposable
@@ -480,6 +537,25 @@
             {
                 this.kinectSensor.Close();
                 this.kinectSensor = null;
+            }
+
+            try
+            {
+                // Release the socket.
+                if (client != null)
+                {
+                    if (client.Connected)
+                    {
+                        client.Shutdown(SocketShutdown.Both);
+                    }
+                    client.Close();
+                }
+
+            }
+            catch (Exception er)
+            {
+                //MessageBox.Show("err02 " + er.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Console.WriteLine(er.ToString());
             }
         }
 
@@ -505,16 +581,28 @@
                     new  System.Windows.Controls.Label[]{ CenterX,CenterY },
                     new  System.Windows.Controls.Label[]{ CenterX2,CenterY2 }
                 };
-                
-                for(int i = 0; i != currentObjectClassified.Length && i != xy_labels.Length; ++i)
+
+                //Message to Send to Server
+                String sendMessage = "sensor-update ";
+                for (int i = 0; i != currentObjectClassified.Length && i != xy_labels.Length; ++i)
                 {
                     if (currentObjectClassified[i].feature.Equals("draw"))
                     {
                         xy_labels[i][0].Content = currentObjectClassified[i].center.X;
                         xy_labels[i][1].Content = currentObjectClassified[i].center.Y;
 
-                   
+                        sendMessage +=  "/ "  + "Oggetto:" + currentObjectClassified[i].name +
+                                        "/ "  + "Centro X: " + currentObjectClassified[i].center.X +
+                                        "/ " + "Centro Y: " + currentObjectClassified[i].center.Y +
+                                        "/ " + "Centro Z: " + currentObjectClassified[i].depth;
+
+
                     }
+                }
+
+                if (!sendMessage.Equals("sensor-update "))
+                {
+                    Send(sendMessage);
                 }
 
                 for (int i = 0; i < currentObjectClassified.Length; ++i)
@@ -667,8 +755,8 @@
                             depthData,
                             depthWidth,
                             //
-                            colorFrame.FrameDescription.Width / depthWidth,
-                            colorFrame.FrameDescription.Height / depthHeight,
+                            Math.Ceiling( (double)colorFrame.FrameDescription.Width / depthWidth),
+                            Math.Ceiling((double)colorFrame.FrameDescription.Height / depthHeight),
                             //
                             depthMin,
                             depthMax
@@ -916,29 +1004,7 @@
         }
 
 
-#if false
-        //-------------- buttun Send -> Cut Depth -> And adjsut brightes and contrast method.
-        private TcpListener tcpListener = new TcpListener(IPAddress.Any, 3200);
-          
-        //send to android client
-          private void button1_Click(object sender, RoutedEventArgs e)
-          {
-                 
-                  string name = null;
-                  string _height = null;
-                  string _Width = null;
-                  if (currentObjectClassified.feature.Equals("draw"))
-                  {
-                      name = currentObjectClassified.name;
-                
-                _height = ((currentObjectClassified.rectangle.Height/100)*2.54).ToString();
-                      _Width = ((currentObjectClassified.rectangle.Width /100)*2.54).ToString();
-                
-                  }
 
-                Server TCPServer = new Server(name, tcpListener, _height, _Width);
-        }
-#endif
 
         //open new window (cut depth)
         private void button2_Click(object sender, EventArgs e)
@@ -976,5 +1042,203 @@
             
   
         }
+
+
+
+#region Client
+
+
+        // funzione utilizzata per inviare la stringa al socket
+        private void Send(String data)
+        {
+           
+                // se è connesso
+                if (client.Connected)
+                {
+                    // Convert the string data to byte data using ASCII encoding.
+                    // converte la stringa in un array di byte
+                    byte[] byteData = Encoding.ASCII.GetBytes(data);
+
+                    // converte in byte la lunghezza della stringa data
+                    byte[] intBytes = BitConverter.GetBytes(data.Length);
+                    if (BitConverter.IsLittleEndian)
+                        Array.Reverse(intBytes);
+                    byte[] buffer = intBytes;
+
+                    // crea un nuovo array di byte dove vengono inseriti l'array contente in byte la lungezza di data ed il valore di data in byte
+                    int newSize = buffer.Length + byteData.Length;
+                    MemoryStream ms = new MemoryStream(new byte[newSize], 0, newSize, true, true);
+                    ms.Write(buffer, 0, buffer.Length);
+                    ms.Write(byteData, 0, byteData.Length);
+                    byte[] merged = ms.GetBuffer();
+
+                    // Begin sending the data to the remote device.
+                    try
+                    {
+                        // avvia l'invio dei dati in modalità asincrona
+                        client.BeginSend(merged, 0, merged.Length, 0,
+                            new AsyncCallback(SendCallback), client);
+                        // se itr = 20 allora avvia NewThread
+                        if (itr == 20)
+                        {
+                            itr = 0;
+                            //NewThread richiama la funzione per scaricare i dati ricevuti dal socket
+                            Thread t = new Thread(NewThread);
+                            t.Start();
+                        }
+                        else
+                        {
+                            itr++;
+                        }
+                    }
+                    catch (SocketException ex)
+                    {
+                        client.Close();
+                    }
+                }
+                else
+                {
+                    // se si chiude la connessione allora riprova a connetterti
+                    if (!trd.IsAlive)
+                    {
+                        client = new Socket(AddressFamily.InterNetwork,
+                            SocketType.Stream, ProtocolType.Tcp);
+                        trd = new Thread(NewConnectThread);
+                        trd.Start();
+                    }
+                    Console.WriteLine("");
+                }
+            }
+        
+        // invio dati in modo asincrono
+        private static void SendCallback(IAsyncResult ar)
+        {
+            try
+            {
+                // Retrieve the socket from the state object.
+                Socket client = (Socket)ar.AsyncState;
+
+                // Complete sending the data to the remote device.
+                int bytesSent = client.EndSend(ar);
+
+                // Signal that all bytes have been sent.
+                sendDone.Set();
+            }
+            catch (Exception e)
+            {
+                //MessageBox.Show("err04 " + e.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Console.WriteLine(e.ToString());
+            }
+        }
+
+        // riceve i dati dal socket. serve per svuotare il buffer
+        private static void Receive(Socket client)
+        {
+            try
+            {
+                // Create the state object.
+                StateObject state = new StateObject();
+                state.workSocket = client;
+
+                // Begin receiving the data from the remote device.
+                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(ReceiveCallback), state);
+            }
+            catch (Exception e)
+            {
+                //MessageBox.Show("err05 " + e.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Console.WriteLine(e.ToString());
+            }
+        }
+
+        //ricezione dei dati in modo asincrono
+        private static void ReceiveCallback(IAsyncResult ar)
+        {
+            try
+            {
+                // Retrieve the state object and the client socket 
+                // from the asynchronous state object.
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket client = state.workSocket;
+
+                // Read data from the remote device.
+                int bytesRead = client.EndReceive(ar);
+
+                if (bytesRead > 0)
+                {
+                    // There might be more data, so store the data received so far.
+                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                    // Get the rest of the data.
+                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+                }
+                else
+                {
+                    // All the data has arrived; put it in response.
+                    if (state.sb.Length > 1)
+                    {
+                        response = state.sb.ToString();
+                    }
+                    // Signal that all bytes have been received.
+                    receiveDone.Set();
+                }
+            }
+            catch (Exception e)
+            {
+                //MessageBox.Show("err06 " + e.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Console.WriteLine(e.ToString());
+            }
+        }
+
+        // funzione del thread che richiama la funzione ricezione dei dati da parte del socket
+        void NewThread()
+        {
+            //code goes here
+            Receive(client);
+        }
+
+        // funzione del thread che attiva la connessione
+        void NewConnectThread()
+        {
+            //localhost
+            IPHostEntry ipHostInfo = Dns.GetHostEntry("localhost");
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+            do
+            {
+                try
+                {
+                    client.Connect(remoteEP);
+                }
+                catch (Exception e)
+                {
+                    // prova a connettersi ogni 1/2 secondo
+                    Thread.Sleep(500);
+                }
+                //client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
+
+            } while ((!client.Connected) & (!fine));
+            // termina quando è connesso oppure quando si chiude la finestra
+
+        }
+    
+
+            // State object for receiving data from remote device.
+            public class StateObject
+            {
+                // Client socket.
+                public Socket workSocket = null;
+                // Size of receive buffer.
+                public const int BufferSize = 256;
+                // Receive buffer.
+                public byte[] buffer = new byte[BufferSize];
+                // Received data string.
+                public StringBuilder sb = new StringBuilder();
+            }
+
+#endregion
+
     }
-  }
+
+}

@@ -340,6 +340,7 @@ namespace Microsoft.Samples.Kinect.BodyBasics.source
         {
             //to do: if u_at_pos is 0, try to get depth from near points
             ushort u_at_pos = depthData[pos_x + pos_y * depthWidth];
+            
             double norm_depth = u_at_pos > min ? ((double)(u_at_pos) - min) / (max - min) : 0.0;
             return norm_depth;
         }

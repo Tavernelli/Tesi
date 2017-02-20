@@ -109,7 +109,6 @@
       <DependentUpon>CutDepth.xaml</DependentUpon>
     </Compile>
     <Compile Include="source\BackgroudRemovalTool.cs" />
-    <Compile Include="source\Server.cs" />
     <Page Include="source\CutDepth.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
