@@ -251,9 +251,10 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             }
 
             this.Close();
-
+            
             MainWindow mw = new MainWindow();
 
+            
         }
 
 

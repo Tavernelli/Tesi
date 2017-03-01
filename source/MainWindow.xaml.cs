@@ -525,12 +525,27 @@
         /// <param name="e">event arguments</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
+            
             fine = true;
             if (this.bodyFrameReader != null)
             {
                 // BodyFrameReader is IDisposable
                 this.bodyFrameReader.Dispose();
                 this.bodyFrameReader = null;
+            }
+
+            if (this.colorFrameReader != null)
+            {
+                // ColorFrameReder is IDisposable
+                this.colorFrameReader.Dispose();
+                this.colorFrameReader = null;
+            }
+
+            if (this.depthFrameReader != null)
+            {
+                // ColorFrameReder is IDisposable
+                this.depthFrameReader.Dispose();
+                this.depthFrameReader = null;
             }
 
             if (this.kinectSensor != null)
@@ -551,12 +566,16 @@
                     client.Close();
                 }
 
+
             }
             catch (Exception er)
             {
                 //MessageBox.Show("err02 " + er.ToString(), "ERRORE", MessageBoxButton.OK, MessageBoxImage.Error);
                 //Console.WriteLine(er.ToString());
             }
+            
+
+
         }
 
 
@@ -1012,37 +1031,6 @@
             Windowdepth win2 = new Windowdepth(new ClassifiedObject[2] { currentObjectClassified[0], currentObjectClassified[1] });
             win2.Show();
         }
-        
-
-        private void EventClosed(object sender, EventArgs e)
-        {
-            if (colorFrameReader != null)
-            {
-                colorFrameReader.Dispose();
-
-            }
-            if (bodyFrameReader != null)
-            {
-                bodyFrameReader.Dispose();
-
-            }
-
-            if (depthFrameReader != null)
-            {
-                depthFrameReader.Dispose();
-
-            }
-
-            if (kinectSensor != null)
-            {
-                kinectSensor.Close();
-            }
-
-            this.Close();
-            
-  
-        }
-
 
 
 #region Client

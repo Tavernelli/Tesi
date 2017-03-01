@@ -1,5 +1,9 @@
 ﻿using System.Windows;
-
+using Microsoft.Win32;
+using System;
+using System.Diagnostics;
+using System.Windows.Media.Imaging;
+using System.Threading;
 
 namespace FinestraIntro
 
@@ -9,12 +13,59 @@ namespace FinestraIntro
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        //process relative to exe file
+        Process myProcess;
         public MainWindow()
         {
             InitializeComponent();
+
+            // check if sdk is already install!
+            if (checkSDK())
+            {
+               
+                ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
+                OpenExeInstall.ToolTip = "Sdk Already Installed!";
+                //OpenExeInstall.IsEnabled = false;
+
+            }
+
         }
 
-          
+        public bool checkSDK()
+        {
+
+            string registry_key = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+            using (Microsoft.Win32.RegistryKey key = Registry.LocalMachine.OpenSubKey(registry_key))
+            {
+                foreach (string subkey_name in key.GetSubKeyNames())
+                {
+                    using (Microsoft.Win32.RegistryKey subkey = key.OpenSubKey(subkey_name))
+                    {
+                        if (!ReferenceEquals(subkey.GetValue("DisplayName"), null))
+                        {
+
+                            string SoftNames = Convert.ToString(subkey.GetValue("DisplayName"));
+
+                            if (SoftNames.Contains("Kinect for Windows SDK v2.0"))
+                            {
+
+                                return true;
+                                break;
+                            }
+                          
+
+
+                        }
+                    }
+                }
+
+            }
+            return false;
+        }
+
+
+
 
         //OpenCreateSamples
         private void button_Click(object sender, RoutedEventArgs e)
@@ -38,6 +89,7 @@ namespace FinestraIntro
         {
 
             this.Close();
+            System.Environment.Exit(1);
         }
 
         //GenCascade
@@ -47,6 +99,35 @@ namespace FinestraIntro
             b.ShowDialog();
         }
 
+
+        private void OpenExeInstall_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            myProcess = Process.Start("ImageIcon\\KinectSDK-v2.0_1409-Setup.exe");
+
+            while (!myProcess.HasExited)
+            {
+                if (checkSDK())
+                {
+
+                    ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
+                    OpenExeInstall.ToolTip = "Sdk Already Installed!";
+                    OpenExeInstall.IsEnabled = false;
+                    Thread.Sleep(2000);
+                }
+
+            }
+        }
+
+
+            
+            
        
+
+        
+
+
+
     }
 }
