@@ -15,7 +15,25 @@ namespace FinestraIntro
     {
 
         //process relative to exe file
-        Process myProcess;
+        private Process myProcess;
+        bool MyProcessIsRunning;
+        Process MyProcess
+        {
+            get { return myProcess; }
+            set
+            {
+                if (myProcess != null)
+                {
+                    myProcess.Exited -= MyProcess_Exited;
+                }
+                myProcess = value;
+                if (myProcess != null)
+                {
+                    myProcess.Exited += MyProcess_Exited;
+                }
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -23,15 +41,18 @@ namespace FinestraIntro
             // check if sdk is already install!
             if (checkSDK())
             {
-               
+
                 ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
                 OpenExeInstall.ToolTip = "Sdk Already Installed!";
                 OpenExeInstall.IsEnabled = false;
 
             }
 
+          
         }
 
+
+        //method that verify in the register if adk is installed 
         public bool checkSDK()
         {
 
@@ -51,9 +72,9 @@ namespace FinestraIntro
                             {
 
                                 return true;
-                                
+
                             }
-                          
+
 
 
                         }
@@ -65,13 +86,11 @@ namespace FinestraIntro
         }
 
 
-
-
         //OpenCreateSamples
         private void button_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Samples.Kinect.ColorBasics.MainWindow nuovo = new Microsoft.Samples.Kinect.ColorBasics.MainWindow();
-            
+
             nuovo.ShowDialog();
             nuovo.Close();
 
@@ -100,34 +119,35 @@ namespace FinestraIntro
         }
 
 
+        //install sdk
         private void OpenExeInstall_Click(object sender, RoutedEventArgs e)
         {
 
+            MyProcess = Process.Start("ImageIcon\\KinectSDK-v2.0_1409-Setup.exe");
 
-            myProcess = Process.Start("ImageIcon\\KinectSDK-v2.0_1409-Setup.exe");
+            // enable raising events for the process.
+            MyProcess.EnableRaisingEvents = true;
 
-            while (!myProcess.HasExited)
-            {
-                if (checkSDK())
-                {
-
-                    ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
-                    OpenExeInstall.ToolTip = "Sdk Already Installed!";
-                    OpenExeInstall.IsEnabled = false;
-                    
-                }
-
-            }
+            // set the flag to know whether my process is running
+            MyProcessIsRunning = true;
         }
 
 
+        private void MyProcess_Exited(object sender, EventArgs e)
+        {
+            // the process has just exited. what do you want to do?
+            MyProcessIsRunning = false;
             
-            
-       
 
-        
+            if (checkSDK())
+            {
+                ciao.Dispatcher.Invoke(new Action(() => { ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute)); }));
+                OpenExeInstall.Dispatcher.Invoke(new Action(() => { OpenExeInstall.ToolTip = "Sdk Already Installed!"; }));
+                OpenExeInstall.Dispatcher.Invoke(new Action(() => { OpenExeInstall.IsEnabled = false; }));
 
+            }
 
-
+ 
+        }
     }
 }
