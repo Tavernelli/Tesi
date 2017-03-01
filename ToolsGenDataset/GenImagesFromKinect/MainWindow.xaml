@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Color Basics" 
         Height="600" Width="900" 
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         Closing="MainWindow_Closing">
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />

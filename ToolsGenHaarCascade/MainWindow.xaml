@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToolsGenHaarCascade"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="369" ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Title="MainWindow" Height="350" Width="369" >
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
