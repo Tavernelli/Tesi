@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
-using System.Threading;
+
 
 namespace FinestraIntro
 
@@ -26,7 +26,7 @@ namespace FinestraIntro
                
                 ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
                 OpenExeInstall.ToolTip = "Sdk Already Installed!";
-                //OpenExeInstall.IsEnabled = false;
+                OpenExeInstall.IsEnabled = false;
 
             }
 
@@ -51,7 +51,7 @@ namespace FinestraIntro
                             {
 
                                 return true;
-                                break;
+                                
                             }
                           
 
@@ -114,7 +114,7 @@ namespace FinestraIntro
                     ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
                     OpenExeInstall.ToolTip = "Sdk Already Installed!";
                     OpenExeInstall.IsEnabled = false;
-                    Thread.Sleep(2000);
+                    
                 }
 
             }
