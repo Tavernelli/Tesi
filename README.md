@@ -1,3 +1,3 @@
 # Tesi
 Tesi di Laurea Magistrale
-Rilevazione oggetti e bodies tramite kinect V.2.
+Kinect For Health: Utilizzo della Kinect One per riconoscere oggetti a scopo di teleriabilitazione.
