@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.ColorBasics"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="DialogCreateSamples" Height="511.452" Width="522.694">
+        Height="511.452" Width="522.694">
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />

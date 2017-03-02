@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Title="MainWindow" Height="600" Width="1000">
+         Height="600" Width="1000">
         
     <Window.Resources>
 

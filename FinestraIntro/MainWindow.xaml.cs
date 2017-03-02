@@ -52,7 +52,7 @@ namespace FinestraIntro
         }
 
 
-        //method that verify in the register if adk is installed 
+        //method that verify in the register if sdk is installed 
         public bool checkSDK()
         {
 

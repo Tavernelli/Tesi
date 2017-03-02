@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToolsGenHaarCascade"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="MainWindow" Height="350" Width="369" >
+        Height="350" Width="369" >
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e" />
