@@ -119,8 +119,8 @@ namespace Microsoft.Samples.Kinect.BodyBasics
                     {
                         if (currentObjectClassified[i].feature.Equals("draw"))
                         {
-                            double scalefactorX = 3.75;
-                            double scalefactorY = 2.54;
+                            int scalefactorX = 4;
+                            double scalefactorY = 2.75;
                             int scalefactorRect = 2;
                             Rect rect = new Rect(currentObjectClassified[i].rectangle.X / scalefactorX,
                                                  currentObjectClassified[i].rectangle.Y / scalefactorY,
