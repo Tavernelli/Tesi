@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
-
+using System.Windows.Forms;
 
 namespace FinestraIntro
 
@@ -87,6 +87,15 @@ namespace FinestraIntro
         //OpenCreateSamples
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            if (!checkSDK())
+            {
+                System.Windows.Forms.MessageBox.Show("SDK NOT INSTALL YET!",
+                "Warning",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button1);
+                return;
+            }
             Microsoft.Samples.Kinect.ColorBasics.MainWindow nuovo = new Microsoft.Samples.Kinect.ColorBasics.MainWindow();
 
             nuovo.ShowDialog();
@@ -98,6 +107,15 @@ namespace FinestraIntro
         //open ObjectRec
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+            if (!checkSDK())
+            {
+                System.Windows.Forms.MessageBox.Show("SDK NOT INSTALL YET!",
+                "Warning",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button1);
+                return;
+            }
             Microsoft.Samples.Kinect.BodyBasics.MainWindow a = new Microsoft.Samples.Kinect.BodyBasics.MainWindow();
             a.ShowDialog();
         }
@@ -110,8 +128,18 @@ namespace FinestraIntro
         }
 
         //GenCascade
+
         private void button3_Click(object sender, RoutedEventArgs e)
         {
+            if (!checkSDK())
+            {
+                System.Windows.Forms.MessageBox.Show("SDK NOT INSTALL YET!",
+                "Warning",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation,
+                MessageBoxDefaultButton.Button1);
+                    return;
+            }
             ToolsGenHaarCascade.MainWindow b = new ToolsGenHaarCascade.MainWindow();
             b.ShowDialog();
         }
@@ -140,7 +168,7 @@ namespace FinestraIntro
             if (checkSDK())
             {
                 ciao.Dispatcher.Invoke(new Action(() => { ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute)); }));
-                OpenExeInstall.Dispatcher.Invoke(new Action(() => { OpenExeInstall.ToolTip = "Sdk Already Installed!"; }));
+                OpenExeInstall.Dispatcher.Invoke(new Action(() => { OpenExeInstall.ToolTip = "SDK Already Installed!"; }));
                 OpenExeInstall.Dispatcher.Invoke(new Action(() => { OpenExeInstall.IsEnabled = false; }));
 
             }

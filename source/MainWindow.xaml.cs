@@ -895,7 +895,16 @@
                   if (drawBrush != null)
                   {
                       drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
-                  }
+#if false
+                    //stampa le coordinate dei body
+                    invioDati += "\"" + jointType + "_x\" " 
+                        + (jointPoints[jointType].X) 
+                        + " \"" + jointType + "_y\" " 
+                        +  jointPoints[jointType].Y + "\n";
+                    string path = "Body.txt";
+                    System.IO.File.WriteAllText(path, invioDati);
+#endif
+                }
               }
           }
 
