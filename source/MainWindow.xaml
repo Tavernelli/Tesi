@@ -45,7 +45,7 @@
             <StatusBarItem Content="{Binding StatusText}" />
         </StatusBar>
         <Button x:Name="button" Content="Open Model" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="11,11,0,0" VerticalAlignment="Top" Width="87" Click="UploadModel_Click" Height="18"/>
-        <!--<Button x:Name="button1" Content="Send" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="601,4,0,0" VerticalAlignment="Top" Width="42" Click="button1_Click"/>-->
+       <!-- <Button x:Name="StartGame" Content="StartGame" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="106,11,0,0" VerticalAlignment="Top" Width="73" Click="button1_Click"/>-->
         <Button x:Name="button2" Content="CutDepth" Style ="{StaticResource SelectImagesPathButton}" HorizontalAlignment="Left" Margin="11,34,0,0" VerticalAlignment="Top" Width="89" Click="button2_Click" Grid.RowSpan="2"/>
         <Slider x:Name="slider" Value="{Binding ElementName=label,Path=Value}" TickFrequency="5" HorizontalAlignment="Right" Margin="0,16,73,0" VerticalAlignment="Top" Width="132" Maximum="100" Minimum="-100" LargeChange="100" SmallChange="5" />
         <Label x:Name="label" Content="Contrast:" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="12" Foreground="#FF52318F" Height="30" Margin="0,9,206,0" Width="73"/>

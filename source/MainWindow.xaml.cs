@@ -1042,6 +1042,8 @@
         }
 
 
+
+        
 #region Client
 
 
@@ -1234,8 +1236,19 @@
                 public StringBuilder sb = new StringBuilder();
             }
 
-#endregion
+        #endregion
 
+
+#if false
+        private System.Diagnostics.Process myProcess;
+        //startGame Button
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        //sostituire con Creator!!
+            myProcess = System.Diagnostics.Process.Start("ImageIcon\\KinectSDK-v2.0_1409-Setup.exe");
+        }
+#endif
     }
 
 }

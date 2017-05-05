@@ -43,7 +43,7 @@ namespace FinestraIntro
             {
 
                 ciao.Source = new BitmapImage(new Uri("ImageIcon/downloadGray.png", UriKind.RelativeOrAbsolute));
-                OpenExeInstall.ToolTip = "Sdk Already Installed!";
+                OpenExeInstall.ToolTip = "SDK Already Installed!";
                 OpenExeInstall.IsEnabled = false;
 
             }
